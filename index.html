@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600;700;800&family=Saira:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0a0b0e}
+  ::selection{background:rgba(229,72,77,.35)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  input{outline:none}
+  @keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes overlayIn{from{opacity:0}to{opacity:1}}
+  @keyframes panelIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes drawerIn{from{transform:translateX(-100%)}to{transform:none}}
+  image-slot{--is-bg:#0e0f13}
+</style>
+</helmet>
+
+<div style="{{ appStyle }}">
+
+  <header style="position:sticky;top:0;z-index:60;background:rgba(10,11,14,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07)">
+    <div style="max-width:1280px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:13px;flex:0 0 auto">
+        <button onClick="{{ toggleMenu }}" aria-label="menu" style="display:flex;flex-direction:column;gap:3.5px;justify-content:center;width:38px;height:38px;padding:0 9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:9px;cursor:pointer;transition:background .18s, border-color .18s, transform .18s" style-hover="background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.22); transform:translateY(-1px)">
+          <span style="height:2px;background:#cfd2d8;border-radius:2px"></span>
+          <span style="height:2px;background:#cfd2d8;border-radius:2px"></span>
+          <span style="height:2px;background:#cfd2d8;border-radius:2px"></span>
+        </button>
+        <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:0">
+          <span style="{{ markStyle }}"></span>
+          <span style="font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:19px;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:1">{{ ui.brand }}</span>
+        </button>
+      </div>
+
+      <div style="flex:1 1 auto"></div>
+
+      <div style="display:flex;align-items:center;gap:9px;flex:0 1 auto;flex-wrap:wrap;justify-content:flex-end">
+        <div style="position:relative;display:flex;align-items:center">
+          <span style="position:absolute;left:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b606b;pointer-events:none">⌕</span>
+          <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="{{ ui.searchPh }}" style="width:200px;max-width:46vw;padding:9px 12px 9px 30px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:9px;color:#ECEDEF;font-family:'Saira',sans-serif;font-size:14px" />
+        </div>
+        <div style="display:flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:3px">
+          <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="3">
+            <button onClick="{{ chip.onClick }}" style="{{ chip.style }}">{{ chip.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:3px">
+          <sc-for list="{{ langs }}" as="lg" hint-placeholder-count="2">
+            <button onClick="{{ lg.onClick }}" style="{{ lg.style }}">{{ lg.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <main style="animation:viewIn .4s ease both">
+      <section style="position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)">
+        <div style="{{ heroGlow }}"></div>
+        <div style="max-width:1280px;margin:0 auto;padding:64px 22px 50px;position:relative">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:#6b7280;margin-bottom:16px">{{ ui.kicker }}</div>
+          <h1 style="font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:clamp(42px,7vw,86px);line-height:.92;letter-spacing:.005em;text-transform:uppercase;margin:0;color:#fff;max-width:16ch;text-wrap:balance">{{ ui.title }}</h1>
+          <p style="margin:20px 0 0;font-size:clamp(15px,1.7vw,19px);line-height:1.5;color:#9398a3;max-width:54ch">{{ ui.subtitle }}</p>
+        </div>
+      </section>
+
+      <div style="max-width:1280px;margin:0 auto;padding:46px 22px 80px">
+
+        <sc-if value="{{ hasFeatured }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-bottom:54px">
+            <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:22px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#E5484D"></div>
+              <h2 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:26px;letter-spacing:.02em;text-transform:uppercase;margin:0;color:#ECEDEF">{{ ui.featured }}</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px">
+              <sc-for list="{{ featured }}" as="card" hint-placeholder-count="4">
+                <button onClick="{{ card.onClick }}" style="{{ card.featStyle }}" style-hover="transform:translateY(-7px); box-shadow:0 0 0 1px var(--ac), 0 36px 82px -20px var(--ac); border-color:color-mix(in srgb, var(--ac) 70%, transparent); --zoom:1.1">
+                  <image-slot id="{{ card.slotId }}" placeholder=" " shape="rect" style="position:absolute;inset:0;width:100%;height:100%;transform:scale(var(--zoom,1));transition:transform .6s cubic-bezier(.2,.7,.2,1)"></image-slot>
+                  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,12,.05) 0%,rgba(8,9,12,.5) 52%,rgba(8,9,12,.93) 100%)"></div>
+                  <div style="position:absolute;inset:0;background:radial-gradient(110% 80% at 85% 100%,color-mix(in srgb,var(--ac) 38%,transparent),transparent 58%)"></div>
+                  <div style="position:absolute;left:0;bottom:0;width:100%;height:4px;background:var(--ac)"></div>
+                  <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 26px;z-index:2;display:flex;flex-direction:column;gap:9px">
+                    <span style="align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:color-mix(in srgb,var(--ac) 80%,#000);padding:4px 9px;border-radius:5px">{{ card.catLabel }}</span>
+                    <h3 style="font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:38px;line-height:.92;text-transform:uppercase;letter-spacing:.01em;margin:0;color:#fff">{{ card.name }}</h3>
+                    <p style="margin:0;font-size:14.5px;line-height:1.4;color:#c4c8d0;max-width:38ch">{{ card.tagline }}</p>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ groups }}" as="group" hint-placeholder-count="5">
+          <div style="margin-bottom:50px">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)">
+              <h2 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:22px;letter-spacing:.03em;text-transform:uppercase;margin:0;color:#ECEDEF">{{ group.title }}</h2>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#5b606b">{{ group.count }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:16px">
+              <sc-for list="{{ group.series }}" as="card" hint-placeholder-count="6">
+                <button onClick="{{ card.onClick }}" style="{{ card.style }}" style-hover="transform:translateY(-8px); box-shadow:0 0 0 1px var(--ac), 0 26px 62px -16px var(--ac); border-color:color-mix(in srgb, var(--ac) 65%, transparent); --zoom:1.08">
+                  <div style="position:relative;width:100%;aspect-ratio:16/10;background:#0e0f13;overflow:hidden">
+                    <div style="position:absolute;left:0;top:0;width:100%;height:3px;background:var(--ac);z-index:2"></div>
+                    <image-slot id="{{ card.slotId }}" placeholder=" " shape="rect" style="width:100%;height:100%;display:block;transform:scale(var(--zoom,1));transition:transform .55s cubic-bezier(.2,.7,.2,1)"></image-slot>
+                  </div>
+                  <div style="padding:13px 15px 16px;display:flex;flex-direction:column;gap:7px;align-items:flex-start">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 42%,transparent);padding:3px 7px;border-radius:5px">{{ card.catLabel }}</span>
+                    <h3 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:21px;line-height:1;text-transform:uppercase;letter-spacing:.01em;margin:0;color:#ECEDEF">{{ card.name }}</h3>
+                    <p style="margin:0;font-size:13px;line-height:1.42;color:#868b96">{{ card.tagline }}</p>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:70px 20px;color:#6b7280;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.06em">{{ ui.noResults }}</div>
+        </sc-if>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isSeries }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="{{ detail.name }}" style="{{ detail.rootStyle }}">
+      <div style="max-width:1280px;margin:0 auto;padding:16px 22px 0;display:flex;align-items:center;gap:12px">
+        <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#cfd2d8;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border-radius:9px;cursor:pointer;transition:background .18s, border-color .18s, transform .18s, color .18s" style-hover="background:rgba(255,255,255,.12); border-color:color-mix(in srgb, var(--ac) 50%, transparent); color:#fff; transform:translateX(-2px)">‹ {{ ui.back }}</button>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:#5b606b">{{ detail.groupTitle }}</span>
+      </div>
+
+      <section style="position:relative;height:clamp(300px,46vw,440px);overflow:hidden;margin-top:14px">
+        <div ref="{{ bannerRef }}" style="position:absolute;left:0;right:0;top:-12%;height:130%;will-change:transform">
+          <image-slot id="{{ detail.bannerSlot }}" placeholder=" " shape="rect" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        </div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,12,.12) 0%,rgba(8,9,12,.55) 55%,#0a0b0e 100%)"></div>
+        <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 10% 110%,color-mix(in srgb,var(--ac) 50%,transparent),transparent 55%)"></div>
+        <div style="position:absolute;left:0;bottom:0;width:100%;height:5px;background:var(--ac)"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;z-index:2">
+          <div style="max-width:1280px;margin:0 auto;padding:0 22px 30px;display:flex;flex-direction:column;gap:12px">
+            <span style="align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:color-mix(in srgb,var(--ac) 82%,#000);padding:5px 11px;border-radius:6px">{{ detail.catLabel }}</span>
+            <h1 style="font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:clamp(46px,8vw,104px);line-height:.88;text-transform:uppercase;letter-spacing:.01em;margin:0;color:#fff">{{ detail.name }}</h1>
+            <p style="margin:0;font-size:clamp(15px,2vw,20px);line-height:1.4;color:#c4c8d0;max-width:52ch">{{ detail.tagline }}</p>
+          </div>
+        </div>
+      </section>
+
+      <div style="max-width:1100px;margin:0 auto;padding:48px 22px 90px;display:flex;flex-direction:column;gap:54px">
+
+        <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:46px;align-items:start" data-section="about">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin-bottom:16px">{{ ui.about }}</div>
+            <p style="margin:0;font-size:clamp(17px,2.1vw,21px);line-height:1.62;color:#d3d6dc">{{ detail.intro }}</p>
+            <sc-if value="{{ detail.isStub }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:22px;display:inline-flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9398a3;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);padding:9px 13px;border-radius:8px">◷ {{ ui.stub }}</div>
+            </sc-if>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <sc-for list="{{ detail.specs }}" as="sp" hint-placeholder-count="4">
+              <div style="background:#14161b;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:14px 15px;display:flex;flex-direction:column;gap:6px">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280">{{ sp.label }}</span>
+                <span style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:21px;line-height:1;color:#ECEDEF">{{ sp.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ detail.hasFormat }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
+            <div style="background:#14161b;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:22px 24px;border-left:3px solid var(--ac)">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:13px">{{ ui.weekend }}</div>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:#c0c4cc">{{ detail.weekend }}</p>
+            </div>
+            <div style="background:#14161b;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:22px 24px;border-left:3px solid var(--ac)">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:13px">{{ ui.drivers }}</div>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:#c0c4cc">{{ detail.drivers }}</p>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ detail.hasHistory }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin-bottom:20px">{{ ui.history }}</div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ detail.history }}" as="h" hint-placeholder-count="3">
+                <div style="display:flex;gap:18px;padding:16px 0;border-top:1px solid rgba(255,255,255,.07)">
+                  <span style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--ac);min-width:30px;padding-top:2px">{{ h.no }}</span>
+                  <p style="margin:0;font-size:15.5px;line-height:1.55;color:#c8ccd3">{{ h.text }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)">
+          <div style="position:relative;min-height:200px;background:#0e0f13">
+            <image-slot id="{{ detail.circuitSlot }}" placeholder=" " shape="rect" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 40%,#14161b 100%)"></div>
+          </div>
+          <div style="background:#14161b;padding:28px 30px;display:flex;flex-direction:column;justify-content:center;gap:12px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac)">{{ ui.circuit }}</div>
+            <h3 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:30px;line-height:1;text-transform:uppercase;margin:0;color:#fff">{{ detail.circuitName }}</h3>
+            <p style="margin:0;font-size:15px;line-height:1.6;color:#bcc0c8">{{ detail.circuitText }}</p>
+          </div>
+        </div>
+
+        <div style="position:relative;border-radius:16px;padding:30px 32px;background:color-mix(in srgb,var(--ac) 13%,#0e0f13);border:1px solid color-mix(in srgb,var(--ac) 35%,transparent);overflow:hidden">
+          <div style="position:absolute;right:-20px;top:-30px;font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:150px;color:color-mix(in srgb,var(--ac) 20%,transparent);line-height:1;pointer-events:none">?</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin-bottom:12px;position:relative">{{ ui.fact }}</div>
+          <p style="margin:0;font-size:clamp(17px,2.2vw,22px);line-height:1.5;color:#eef0f3;max-width:60ch;position:relative">{{ detail.fact }}</p>
+        </div>
+
+        <sc-if value="{{ detail.hasTeams }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+              <h2 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:26px;letter-spacing:.02em;text-transform:uppercase;margin:0;color:#ECEDEF">{{ ui.teams }}</h2>
+            </div>
+            <p style="margin:0 0 22px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#6b7280">{{ ui.teamsHint }}</p>
+            <sc-if value="{{ detail.hasTeamCats }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+                <sc-for list="{{ detail.teamCats }}" as="tc" hint-placeholder-count="3">
+                  <button onClick="{{ tc.onClick }}" style="{{ tc.style }}" style-hover="background:color-mix(in srgb, var(--ac) 16%, rgba(255,255,255,.06)); border-color:color-mix(in srgb, var(--ac) 55%, transparent); color:#fff; transform:translateY(-1px)">{{ tc.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+              <sc-for list="{{ detail.teams }}" as="team" hint-placeholder-count="6">
+                <button onClick="{{ team.onClick }}" style="{{ team.style }}" style-hover="transform:translateY(-4px); box-shadow:0 0 0 1px var(--ac), 0 16px 40px -16px var(--ac); border-color:color-mix(in srgb, var(--ac) 50%, transparent)">
+                  <div style="display:flex;align-items:center;gap:13px">
+                    <div style="width:50px;height:50px;flex:0 0 auto;border-radius:10px;overflow:hidden;background:#0e0f13;border:1px solid rgba(255,255,255,.1)">
+                      <image-slot id="{{ team.logoSlot }}" placeholder=" " shape="rect" fit="contain" style="width:100%;height:100%;display:block"></image-slot>
+                    </div>
+                    <h3 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:18px;line-height:1.02;text-transform:uppercase;letter-spacing:.01em;margin:0;color:#ECEDEF">{{ team.name }}</h3>
+                  </div>
+                  <p style="margin:0;font-size:13px;line-height:1.45;color:#868b96">{{ team.blurb }}</p>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ac)">{{ team.cta }} ›</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ showTeam }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeTeam }}" style="{{ overlayStyle }}">
+      <div onClick="{{ stop }}" style="{{ teamPanelStyle }}">
+        <div style="position:sticky;top:0;background:linear-gradient(180deg,#16181d,rgba(22,24,29,.96));border-bottom:1px solid rgba(255,255,255,.08);padding:20px 24px;display:flex;align-items:center;gap:15px;z-index:3">
+          <div style="width:56px;height:56px;flex:0 0 auto;border-radius:12px;overflow:hidden;background:#0e0f13;border:1px solid rgba(255,255,255,.12)">
+            <image-slot id="{{ team.logoSlot }}" placeholder=" " shape="rect" fit="contain" style="width:100%;height:100%;display:block"></image-slot>
+          </div>
+          <div style="flex:1 1 auto;min-width:0">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ac);margin-bottom:4px">{{ team.seriesName }}</div>
+            <h2 style="font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:28px;line-height:1;text-transform:uppercase;margin:0;color:#fff">{{ team.name }}</h2>
+          </div>
+          <button onClick="{{ closeTeam }}" aria-label="close" style="width:38px;height:38px;flex:0 0 auto;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#cfd2d8;font-size:18px;cursor:pointer;transition:background .18s, border-color .18s, transform .18s, color .18s" style-hover="background:color-mix(in srgb, var(--ac) 35%, rgba(255,255,255,.08)); border-color:var(--ac); color:#fff; transform:rotate(90deg)">✕</button>
+        </div>
+        <div style="padding:24px">
+          <p style="margin:0 0 26px;font-size:15.5px;line-height:1.6;color:#c4c8d0;max-width:60ch">{{ team.blurb }}</p>
+          <sc-if value="{{ team.hasDrivers }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:16px">{{ team.driversLabel }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px;margin-bottom:32px">
+              <sc-for list="{{ team.drivers }}" as="drv" hint-placeholder-count="2">
+                <div style="background:#0e0f13;border:1px solid rgba(255,255,255,.08);border-radius:13px;overflow:hidden">
+                  <div style="position:relative;width:100%;aspect-ratio:3/4;background:#0a0b0e;overflow:hidden">
+                    <image-slot id="{{ drv.slotId }}" placeholder=" " shape="rect" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+                    <div style="position:absolute;left:0;bottom:0;width:100%;height:3px;background:var(--ac)"></div>
+                  </div>
+                  <div style="padding:11px 13px 13px">
+                    <h4 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:16.5px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em;margin:0;color:#ECEDEF">{{ drv.name }}</h4>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:16px">{{ team.carsLabel }}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+            <sc-for list="{{ team.cars }}" as="car" hint-placeholder-count="2">
+              <div style="background:#0e0f13;border:1px solid rgba(255,255,255,.08);border-radius:13px;overflow:hidden">
+                <div style="position:relative;width:100%;aspect-ratio:16/10;background:#0a0b0e">
+                  <image-slot id="{{ car.slotId }}" placeholder=" " shape="rect" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+                  <div style="position:absolute;left:0;bottom:0;width:100%;height:3px;background:var(--ac)"></div>
+                </div>
+                <div style="padding:13px 15px 15px;display:flex;flex-direction:column;gap:6px">
+                  <h4 style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:19px;line-height:1;text-transform:uppercase;margin:0;color:#ECEDEF">{{ car.name }}</h4>
+                  <p style="margin:0;font-size:13px;line-height:1.45;color:#868b96">{{ car.blurb }}</p>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleMenu }}" style="{{ overlayStyle }}">
+      <aside onClick="{{ stop }}" style="position:fixed;left:0;top:0;height:100%;width:300px;max-width:84vw;background:#101218;border-right:1px solid rgba(255,255,255,.09);box-shadow:30px 0 80px -30px #000;animation:drawerIn .3s cubic-bezier(.2,.7,.2,1) both;overflow-y:auto;z-index:1">
+        <div style="padding:20px 22px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6b7280">{{ ui.allSeries }}</span>
+          <button onClick="{{ toggleMenu }}" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#cfd2d8;cursor:pointer">✕</button>
+        </div>
+        <nav style="padding:14px 12px">
+          <sc-for list="{{ menuGroups }}" as="mg" hint-placeholder-count="5">
+            <div style="margin-bottom:16px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5b606b;padding:6px 10px">{{ mg.title }}</div>
+              <sc-for list="{{ mg.items }}" as="it" hint-placeholder-count="4">
+                <button onClick="{{ it.onClick }}" style="{{ it.style }}" style-hover="background:color-mix(in srgb, var(--ac) 14%, rgba(255,255,255,.04)); color:#fff; padding-left:14px">
+                  <span style="width:7px;height:7px;border-radius:50%;background:var(--ac);flex:0 0 auto"></span>
+                  <span style="font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.02em">{{ it.name }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </nav>
+      </aside>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;language&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cs&quot;,&quot;en&quot;],&quot;default&quot;:&quot;cs&quot;,&quot;tsType&quot;:&quot;'cs'|'en'&quot;},&quot;houseAccent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E5484D&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.UI = {
+      brand: { cs: 'Kodex motorsportu', en: 'Motorsport Codex' },
+      kicker: { cs: 'Interaktivní encyklopedie', en: 'Interactive encyclopedia' },
+      title: { cs: 'Zorientuj se v motorsportu', en: 'Make sense of motorsport' },
+      subtitle: { cs: 'Přehledná encyklopedie hlavních závodních sérií světa — auta i motorky. Klikni na sérii a projdi si týmy, vozy a příběhy.', en: 'A clear encyclopedia of the world\u2019s major racing series — cars and bikes. Click a series to explore teams, machines and stories.' },
+      searchPh: { cs: 'Hledat sérii\u2026', en: 'Search series\u2026' },
+      fAll: { cs: 'Vše', en: 'All' },
+      fCars: { cs: 'Auta', en: 'Cars' },
+      fBikes: { cs: 'Motorky', en: 'Bikes' },
+      featured: { cs: 'Vrcholné seriály', en: 'Flagship series' },
+      g_formule: { cs: 'Formule', en: 'Single-seaters' },
+      g_endurance: { cs: 'Vytrvalostní & sportovní vozy', en: 'Endurance & sports cars' },
+      g_touring: { cs: 'Cestovní vozy & stock cars', en: 'Touring & stock cars' },
+      g_moto: { cs: 'Motorky', en: 'Motorcycles' },
+      g_rally: { cs: 'Rally & off-road', en: 'Rally & off-road' },
+      back: { cs: 'Přehled', en: 'Overview' },
+      about: { cs: 'O co jde', en: 'What it is' },
+      weekend: { cs: 'Formát víkendu', en: 'Race weekend' },
+      drivers: { cs: 'Slavná jména', en: 'Notable names' },
+      history: { cs: 'Historické momenty', en: 'Historic moments' },
+      circuit: { cs: 'Charakteristický okruh', en: 'Signature circuit' },
+      fact: { cs: 'Věděl jsi, že\u2026', en: 'Did you know\u2026' },
+      teams: { cs: 'Týmy a výrobci', en: 'Teams & manufacturers' },
+      teamsHint: { cs: 'Klikni na tým — uvnitř najdeš vozy a detaily', en: 'Click a team — cars and details inside' },
+      cars: { cs: 'Vozy', en: 'Cars' },
+      bikes: { cs: 'Stroje', en: 'Machines' },
+      detail: { cs: 'Detail', en: 'Open' },
+      stub: { cs: 'Detailní obsah připravujeme', en: 'Full detail coming soon' },
+      allSeries: { cs: 'Všechny série', en: 'All series' },
+      noResults: { cs: 'Nic nenalezeno', en: 'No results' }
+    };
+    this.LBL = {
+      power: { cs: 'Výkon', en: 'Power' },
+      top: { cs: 'Max. rychlost', en: 'Top speed' },
+      weight: { cs: 'Hmotnost', en: 'Weight' },
+      drive: { cs: 'Pohon', en: 'Drivetrain' },
+      accel: { cs: '0\u2013100 km/h', en: '0\u2013100 km/h' },
+      crew: { cs: 'Posádka', en: 'Crew' },
+      length: { cs: 'Vzdálenost', en: 'Distance' },
+      engine: { cs: 'Motor', en: 'Engine' },
+      format: { cs: 'Formát', en: 'Format' }
+    };
+    this.GROUPS = [
+      { key: 'formule', ids: ['f1', 'f2', 'f3', 'fe', 'indycar', 'sf'] },
+      { key: 'endurance', ids: ['wec', 'imsa', 'gtwc'] },
+      { key: 'touring', ids: ['nascar', 'supercars', 'btcc'] },
+      { key: 'moto', ids: ['motogp', 'moto2', 'moto3', 'wsbk', 'tt', 'mxgp'] },
+      { key: 'rally', ids: ['wrc', 'dakar', 'nhra'] }
+    ];
+    this.FEATURED = ['f1', 'motogp', 'wec', 'nascar'];
+    this.S = this.buildData();
+    this.byId = {};
+    this.S.forEach(s => { this.byId[s.id] = s; });
+    this.state = {
+      view: 'home', selected: null, selectedTeam: null,
+      lang: (props && props.language) === 'en' ? 'en' : 'cs',
+      filter: 'all', search: '', menuOpen: false, teamCat: null
+    };
+    this.bannerEl = null;
+  }
+
+  componentDidMount() {
+    this.onScroll = () => {
+      if (this.bannerEl) {
+        const y = window.scrollY || window.pageYOffset || 0;
+        this.bannerEl.style.transform = 'translate3d(0,' + (y * 0.22) + 'px,0)';
+      }
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+  }
+  componentWillUnmount() { window.removeEventListener('scroll', this.onScroll); }
+  componentDidUpdate(prev) {
+    if (this.props.language && this.props.language !== prev.language && this.props.language !== this.state.lang) {
+      this.setState({ lang: this.props.language });
+    }
+  }
+
+  toTop() { try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); } }
+  openSeries(id) { this.setState({ view: 'series', selected: id, selectedTeam: null, menuOpen: false, teamCat: null }, () => this.toTop()); }
+  goHome() { this.setState({ view: 'home', selected: null, selectedTeam: null, menuOpen: false, teamCat: null }, () => this.toTop()); }
+
+  renderVals() {
+    const lang = this.state.lang;
+    const tr = (x) => x == null ? '' : (typeof x === 'string' ? x : (x[lang] != null ? x[lang] : (x.cs != null ? x.cs : '')));
+    const ui = {};
+    for (const k in this.UI) ui[k] = tr(this.UI[k]);
+    ui.about = ui.about; // resolved above
+    const house = this.props.houseAccent || '#E5484D';
+    const catLabel = (c) => c === 'bikes' ? tr(this.UI.fBikes) : tr(this.UI.fCars);
+
+    const CARD_HOVER = { transform: 'translateY(-8px)', boxShadow: '0 0 0 1px var(--ac), 0 26px 62px -16px var(--ac)', borderColor: 'color-mix(in srgb, var(--ac) 65%, transparent)', '--zoom': '1.08' };
+    const FEAT_HOVER = { transform: 'translateY(-7px)', boxShadow: '0 0 0 1px var(--ac), 0 36px 82px -20px var(--ac)', borderColor: 'color-mix(in srgb, var(--ac) 70%, transparent)', '--zoom': '1.1' };
+    const cardBase = (ac) => ({ '--ac': ac, '--zoom': '1', position: 'relative', display: 'flex', flexDirection: 'column', background: '#16181d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', overflow: 'hidden', cursor: 'pointer', textAlign: 'left', padding: '0', color: 'inherit', font: 'inherit', transition: 'transform .28s cubic-bezier(.2,.7,.2,1), box-shadow .28s, border-color .28s', willChange: 'transform' });
+    const featBase = (ac) => ({ '--ac': ac, '--zoom': '1', position: 'relative', display: 'block', minHeight: '240px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', color: 'inherit', font: 'inherit', padding: '0', transition: 'transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, border-color .3s' });
+
+    const q = (this.state.search || '').trim().toLowerCase();
+    const f = this.state.filter;
+    const matches = (s) => (f === 'all' || s.cat === f) && (!q || tr(s.name).toLowerCase().indexOf(q) >= 0 || tr(s.tagline).toLowerCase().indexOf(q) >= 0);
+
+    const cardVM = (s) => ({
+      id: s.id, name: tr(s.name), tagline: tr(s.tagline), catLabel: catLabel(s.cat),
+      slotId: s.id + '-card', accent: s.accent,
+      style: cardBase(s.accent), hover: CARD_HOVER,
+      featStyle: featBase(s.accent), featHover: FEAT_HOVER,
+      onClick: () => this.openSeries(s.id)
+    });
+
+    const featured = this.FEATURED.map(id => this.byId[id]).filter(matches).map(cardVM);
+    const groups = this.GROUPS.map(g => {
+      const list = g.ids.map(id => this.byId[id]).filter(matches).map(cardVM);
+      return { key: g.key, title: tr(this.UI['g_' + g.key]), count: String(list.length).padStart(2, '0'), series: list };
+    }).filter(g => g.series.length > 0);
+    const hasFeatured = featured.length > 0;
+    const noResults = !hasFeatured && groups.length === 0;
+
+    const chipDefs = [['all', ui.fAll], ['cars', ui.fCars], ['bikes', ui.fBikes]];
+    const chipStyle = (active) => ({ padding: '6px 14px', borderRadius: '7px', border: 'none', cursor: 'pointer', fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', letterSpacing: '.1em', textTransform: 'uppercase', background: active ? house : 'transparent', color: active ? '#fff' : '#9398a3', transition: 'background .2s, color .2s' });
+    const chips = chipDefs.map(([key, label]) => ({ key, label, style: chipStyle(this.state.filter === key), onClick: () => this.setState({ filter: key }) }));
+    const langDefs = [['cs', 'CS'], ['en', 'EN']];
+    const langs = langDefs.map(([key, label]) => ({ key, label, style: chipStyle(this.state.lang === key), onClick: () => this.setState({ lang: key }) }));
+
+    const menuItemBase = { display: 'flex', alignItems: 'center', gap: '11px', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 10px', borderRadius: '8px', color: '#c4c8d0', transition: 'background .15s' };
+    const menuGroups = this.GROUPS.map(g => ({
+      title: tr(this.UI['g_' + g.key]),
+      items: g.ids.map(id => this.byId[id]).map(s => ({ id: s.id, name: tr(s.name), style: Object.assign({ '--ac': s.accent }, menuItemBase), onClick: () => this.openSeries(s.id) }))
+    }));
+
+    // ---- detail ----
+    let detail = null, team = null, showTeam = false;
+    const s = this.state.view === 'series' ? this.byId[this.state.selected] : null;
+    if (s) {
+      const gKey = (this.GROUPS.find(g => g.ids.indexOf(s.id) >= 0) || {}).key;
+      const carsLabel = s.cat === 'bikes' ? ui.bikes : ui.cars;
+      detail = {
+        name: tr(s.name), tagline: tr(s.tagline), catLabel: catLabel(s.cat), accent: s.accent,
+        groupTitle: gKey ? tr(this.UI['g_' + gKey]) : '',
+        rootStyle: { '--ac': s.accent, minHeight: '100vh', animation: 'viewIn .4s ease both' },
+        bannerSlot: s.id + '-banner', circuitSlot: s.id + '-circuit',
+        intro: tr(s.intro),
+        isStub: !s.full,
+        specs: (s.specs || []).map(sp => ({ label: tr(this.LBL[sp.k]), value: tr(sp.v) })),
+        hasFormat: !!(s.weekend || s.drivers),
+        weekend: tr(s.weekend), drivers: tr(s.drivers),
+        hasHistory: !!(s.history && s.history.length),
+        history: (s.history || []).map((h, i) => ({ no: String(i + 1).padStart(2, '0'), text: tr(h) })),
+        circuitName: s.circuit ? s.circuit.name : '', circuitText: s.circuit ? tr(s.circuit.t) : '',
+        fact: tr(s.fact),
+        hasTeams: !!(s.teams && s.teams.length),
+        hasTeamCats: !!(s.teamCats && s.teamCats.length),
+        teamCats: (s.teamCats || []).map(tc => {
+          const active = (this.state.teamCat || (s.teamCats[0] && s.teamCats[0].key)) === tc.key;
+          return {
+            key: tc.key, label: tr(tc.label), active: active,
+            style: {
+              padding: '8px 16px', borderRadius: '9px', border: '1px solid ' + (active ? 'var(--ac)' : 'rgba(255,255,255,.1)'),
+              background: active ? 'color-mix(in srgb, var(--ac) 22%, transparent)' : 'rgba(255,255,255,.04)',
+              color: active ? '#fff' : '#9398a3',
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', letterSpacing: '.14em', textTransform: 'uppercase',
+              cursor: 'pointer', transition: 'background .18s, border-color .18s, color .18s, transform .18s'
+            },
+            onClick: () => this.setState({ teamCat: tc.key })
+          };
+        }),
+        teams: (s.teams || []).filter(t => {
+          if (!s.teamCats || !s.teamCats.length) return true;
+          const cur = this.state.teamCat || s.teamCats[0].key;
+          return (t.cat || s.teamCats[0].key) === cur;
+        }).map(t => ({
+          id: t.id, name: t.name, blurb: tr(t.blurb), cta: carsLabel,
+          logoSlot: s.id + '-' + t.id + '-logo',
+          style: { '--ac': s.accent, display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start', background: '#14161b', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '17px 18px', cursor: 'pointer', textAlign: 'left', color: 'inherit', font: 'inherit', transition: 'transform .2s, box-shadow .2s, border-color .2s' },
+          onClick: () => this.setState({ selectedTeam: t.id })
+        }))
+      };
+      if (this.state.selectedTeam) {
+        const t = (s.teams || []).find(x => x.id === this.state.selectedTeam);
+        if (t) {
+          showTeam = true;
+          team = {
+            name: t.name, seriesName: tr(s.name), blurb: tr(t.blurb),
+            carsLabel: s.cat === 'bikes' ? ui.bikes : ui.cars,
+            driversLabel: tr({ cs: 'Jezdci', en: s.cat === 'bikes' ? 'Riders' : 'Drivers' }),
+            hasDrivers: !!(t.drivers && t.drivers.length),
+            drivers: (t.drivers || []).map((d, i) => ({ name: d, slotId: s.id + '-' + t.id + '-d' + i })),
+            logoSlot: s.id + '-' + t.id + '-logo',
+            cars: (t.cars || []).map((c, i) => ({ name: c.name, blurb: tr(c.b), slotId: s.id + '-' + t.id + '-c' + i }))
+          };
+        }
+      }
+    }
+
+    return {
+      appStyle: { minHeight: '100vh', background: '#0a0b0e', color: '#ECEDEF', fontFamily: "'Saira', system-ui, sans-serif", '--ac': s ? s.accent : house },
+      ui, search: this.state.search,
+      onSearch: (e) => this.setState({ search: e.target.value }),
+      chips, langs, menuGroups,
+      markStyle: { background: house, width: '12px', height: '12px', borderRadius: '2px', display: 'inline-block', flex: '0 0 auto' },
+      heroGlow: { position: 'absolute', inset: '0', background: 'radial-gradient(60% 75% at 16% 0%, color-mix(in srgb, ' + house + ' 16%, transparent), transparent 60%)', pointerEvents: 'none' },
+      ghostHover: { background: 'rgba(255,255,255,.1)', borderColor: 'rgba(255,255,255,.18)' },
+      menuItemHover: { background: 'rgba(255,255,255,.06)' },
+      overlayStyle: { position: 'fixed', inset: '0', zIndex: '90', background: 'rgba(6,7,10,.72)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)', animation: 'overlayIn .25s ease both', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto', padding: '5vh 18px' },
+      teamPanelStyle: { '--ac': s ? s.accent : house, position: 'relative', width: '100%', maxWidth: '780px', background: '#16181d', border: '1px solid rgba(255,255,255,.1)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 40px 100px -30px #000', animation: 'panelIn .3s cubic-bezier(.2,.7,.2,1) both', marginBottom: '5vh' },
+      stop: (e) => e.stopPropagation(),
+      bannerRef: (el) => { this.bannerEl = el; },
+      toggleMenu: () => this.setState(st => ({ menuOpen: !st.menuOpen })),
+      goHome: () => this.goHome(),
+      closeTeam: () => this.setState({ selectedTeam: null }),
+      isHome: this.state.view === 'home',
+      isSeries: this.state.view === 'series' && !!s,
+      hasFeatured, featured, groups, noResults,
+      menuOpen: this.state.menuOpen,
+      detail, team, showTeam
+    };
+  }
+
+  buildData() {
+    const C = (cs, en) => ({ cs, en });
+    return [
+      {
+        id: 'f1', cat: 'cars', accent: '#E8132B', full: true,
+        name: 'Formule 1', tagline: C('Vrchol jednomístných formulí — nejrychlejší okruhové vozy na světě.', 'The pinnacle of single-seaters — the fastest circuit cars on Earth.'),
+        intro: C('Formule 1 je nejprestižnější série okruhových závodů na světě. Deset týmů staví vlastní hybridní monoposty a bojuje celou sezonu o titul jezdců i konstruktérů. Kombinuje extrémní techniku, miliardové rozpočty a globální show.', 'Formula 1 is the world\u2019s most prestigious circuit racing. Ten teams build their own hybrid single-seaters and fight a full season for both the Drivers\u2019 and Constructors\u2019 titles, blending extreme engineering, billion-dollar budgets and a global show.'),
+        specs: [{ k: 'power', v: '~1000 hp' }, { k: 'top', v: '~360 km/h' }, { k: 'weight', v: '798 kg' }, { k: 'accel', v: '~2.6 s' }],
+        weekend: C('Tři tréninky, knock-out kvalifikace (Q1\u2013Q3) a nedělní závod na ~305 km. Některé víkendy navíc obsahují sobotní sprint.', 'Three practice sessions, knock-out qualifying (Q1\u2013Q3) and a Sunday race over ~305 km. Some weekends add a Saturday sprint.'),
+        drivers: C('Současní: Verstappen, Norris, Leclerc, Hamilton. Legendy: Senna, Schumacher, Prost, Fangio.', 'Today: Verstappen, Norris, Leclerc, Hamilton. Legends: Senna, Schumacher, Prost, Fangio.'),
+        history: [C('1950 — první mistrovství světa na okruhu Silverstone.', '1950 — the first World Championship round at Silverstone.'), C('1994 — smrt Ayrtona Senny v Imole změnila bezpečnost navždy.', '1994 — Ayrton Senna\u2019s death at Imola changed safety forever.'), C('2014 — nástup hybridních turbomotorů V6.', '2014 — the V6 turbo-hybrid era begins.'), C('2021 — souboj Verstappen vs. Hamilton rozhodnut až v poslední zatáčce sezony.', '2021 — Verstappen vs. Hamilton decided at the final corner of the year.'), C('2025 — Lewis Hamilton přestupuje po dvanácti letech k Ferrari.', '2025 — Lewis Hamilton joins Ferrari after twelve years.'), C('2026 — nová pravidla, lehčí vozy, hybridní jednotky 50/50 a příchod Audi a Cadillacu.', '2026 — new rules, lighter cars, 50/50 hybrid power units and the arrival of Audi and Cadillac.')],
+        circuit: { name: 'Circuit de Monaco', t: C('Monako — nejslavnější a nejužší trať kalendáře. Úzké uličky, nula prostoru pro chybu, prestiž nade vše.', 'Monaco — the most famous and tightest track on the calendar. Narrow streets, zero margin for error, prestige above all.') },
+        fact: C('Monopost F1 vytváří takový přítlak, že by teoreticky dokázal jet vzhůru nohama ve stropě tunelu.', 'An F1 car makes so much downforce it could, in theory, drive upside-down inside a tunnel.'),
+        teams: [
+          { id: 'redbull', name: 'Red Bull Racing', blurb: C('Domov čtyřnásobného mistra Maxe Verstappena, vrcholná stáj éry 2021–2024.', 'Home of four-time champion Max Verstappen and the leading squad of 2021\u20132024.'), drivers: ['Max Verstappen', 'Isack Hadjar'], cars: [{ name: 'RB22', b: C('Monopost pro nová pravidla 2026.', 'The 2026 rules-reset challenger.') }, { name: 'RB20', b: C('Mistrovský vůz roku 2024.', 'The 2024 title-winning car.') }] },
+          { id: 'ferrari', name: 'Scuderia Ferrari', blurb: C('Nejstarší tým F1. Od roku 2025 jezdí v rudém i Lewis Hamilton.', 'F1\u2019s oldest team. Lewis Hamilton drives in red since 2025.'), drivers: ['Charles Leclerc', 'Lewis Hamilton'], cars: [{ name: 'SF-26', b: C('Rudý monopost nové éry pravidel.', 'The red car of the new rules era.') }, { name: 'SF-25', b: C('První Hamiltonův Ferrari.', 'Hamilton\u2019s first Ferrari.') }] },
+          { id: 'mercedes', name: 'Mercedes-AMG Petronas', blurb: C('Stříbrné šípy s mladým italským talentem po boku Russella.', 'The silver arrows pair Russell with their young Italian rookie.'), drivers: ['George Russell', 'Andrea Kimi Antonelli'], cars: [{ name: 'W17', b: C('Monopost stáje pro éru 2026.', 'The team\u2019s 2026 era challenger.') }] },
+          { id: 'mclaren', name: 'McLaren', blurb: C('Aktuální mistr konstruktérů — papayová ofenziva pokračuje.', 'Reigning constructors\u2019 champion — the papaya charge continues.'), drivers: ['Lando Norris', 'Oscar Piastri'], cars: [{ name: 'MCL40', b: C('Pokračovatel vítězného konceptu.', 'Successor to the winning concept.') }, { name: 'MCL39', b: C('Vůz titulu konstruktérů.', 'The constructors\u2019 title car.') }] },
+          { id: 'aston', name: 'Aston Martin Aramco', blurb: C('Zelená stáj ze Silverstone, od 2026 s motorem Honda.', 'The green Silverstone squad, Honda-powered from 2026.'), drivers: ['Fernando Alonso', 'Lance Stroll'], cars: [{ name: 'AMR26', b: C('První monopost éry s Hondou.', 'First car of the Honda era.') }] },
+          { id: 'williams', name: 'Williams Racing', blurb: C('Devítinásobný mistr konstruktérů. Carlos Sainz tu vede projekt znovuzrození.', 'A nine-time constructors\u2019 champion. Carlos Sainz leads its revival.'), drivers: ['Alexander Albon', 'Carlos Sainz'], cars: [{ name: 'FW48', b: C('Modrobílý vůz pro novou éru.', 'The blue-and-white car of the new era.') }] },
+          { id: 'alpine', name: 'BWT Alpine', blurb: C('Francouzská stáj z Enstone, od 2026 s motory Mercedes.', 'The French Enstone squad, Mercedes-powered from 2026.'), drivers: ['Pierre Gasly', 'Franco Colapinto'], cars: [{ name: 'A526', b: C('Modrorůžový vůz s motorem Mercedes.', 'Blue-and-pink car with Mercedes power.') }] },
+          { id: 'rb', name: 'Visa Cash App Racing Bulls', blurb: C('Sesterský tým Red Bullu z Faenzy — líheň talentů.', 'Red Bull\u2019s Faenza sister squad — the talent academy.'), drivers: ['Liam Lawson', 'Arvid Lindblad'], cars: [{ name: 'VCARB 02', b: C('Druhý monopost značky Racing Bulls.', 'The second car under the Racing Bulls banner.') }] },
+          { id: 'audi', name: 'Audi F1 Team', blurb: C('Někdejší Sauber. Od 2026 jezdí jako tovární Audi — první nasazení značky v F1.', 'The former Sauber. From 2026 it races as the works Audi — the brand\u2019s F1 debut.'), drivers: ['Nico Hülkenberg', 'Gabriel Bortoleto'], cars: [{ name: 'Audi R26', b: C('První monopost s továrním motorem Audi.', 'The first car with a works Audi power unit.') }] },
+          { id: 'haas', name: 'MoneyGram Haas', blurb: C('Jediný americký tým v poli — úzká technická spolupráce s Ferrari.', 'The only American squad on the grid — closely tied to Ferrari.'), drivers: ['Esteban Ocon', 'Oliver Bearman'], cars: [{ name: 'VF-26', b: C('Monopost s technikou z Maranella.', 'A car with Maranello technology.') }] },
+          { id: 'cadillac', name: 'Cadillac F1 Team', blurb: C('Jedenáctý tým pole — americký nováček pro sezonu 2026 pod hlavičkou General Motors.', 'The grid\u2019s eleventh squad — an American newcomer for 2026 under General Motors.'), drivers: ['Sergio Pérez', 'Valtteri Bottas'], cars: [{ name: 'Cadillac C26', b: C('První monopost amerického nováčka.', 'The American newcomer\u2019s first car.') }] }
+        ]
+      },
+      {
+        id: 'f2', cat: 'cars', accent: '#1E6FE8', full: false,
+        name: 'Formule 2', tagline: C('Poslední stupeň před F1 — jednotné vozy, čistý talent.', 'The final step before F1 — spec cars, pure talent.'),
+        intro: C('Formule 2 je hlavní juniorská série pod F1. Všechny týmy jezdí stejný vůz, takže o výsledku rozhoduje jezdec. Jezdí jako předkapela F1 na stejných okruzích.', 'Formula 2 is the main junior series below F1. Every team runs an identical car, so the driver makes the difference, racing as F1\u2019s support act on the same circuits.'),
+        specs: [{ k: 'power', v: '~620 hp' }, { k: 'drive', v: C('zadní', 'rear') }, { k: 'format', v: 'Sprint + Feature' }],
+        circuit: { name: 'Monza', t: C('Jezdí na stejných okruzích jako F1 napříč celým světem.', 'Runs on the same circuits as F1 around the world.') },
+        fact: C('Většina současných pilotů F1 prošla právě Formulí 2.', 'Most of today\u2019s F1 drivers came up through Formula 2.')
+      },
+      {
+        id: 'f3', cat: 'cars', accent: '#C81E5B', full: false,
+        name: 'Formule 3', tagline: C('Nižší juniorský stupeň — brána do vyšších formulí.', 'A lower junior step — the gateway to higher single-seaters.'),
+        intro: C('Formule 3 je nižší stupeň jednotných formulí na cestě k F1. Slouží mladým jezdcům k prvním zkušenostem s rychlými monoposty na velkých okruzích.', 'Formula 3 is a lower step of spec single-seaters on the road to F1, where young drivers get their first taste of fast cars on big circuits.'),
+        specs: [{ k: 'power', v: '~380 hp' }, { k: 'drive', v: C('zadní', 'rear') }],
+        circuit: { name: 'Red Bull Ring', t: C('Součást evropských víkendů F1.', 'Part of the European F1 weekends.') },
+        fact: C('Mnozí jezdci tudy projdou ještě jako teenageři.', 'Many drivers pass through here as teenagers.')
+      },
+      {
+        id: 'fe', cat: 'cars', accent: '#00B8C4', full: true,
+        name: 'Formule E', tagline: C('Plně elektrické monoposty v ulicích velkoměst.', 'Fully electric single-seaters on city streets.'),
+        intro: C('Formule E je mistrovství elektrických formulí, které závodí na dočasných městských okruzích. Důraz je na efektivitu, hospodaření s energií a souboje zblízka.', 'Formula E is the all-electric single-seater championship racing on temporary street circuits, focused on efficiency, energy management and close combat.'),
+        specs: [{ k: 'power', v: '~470 hp (350 kW)' }, { k: 'top', v: '~320 km/h' }, { k: 'drive', v: C('elektro / zadní', 'electric / rear') }],
+        weekend: C('Šampionát je o efektivitě. V závodě se aktivuje Attack Mode — krátký boost výkonu po průjezdu vyznačenou zónou.', 'It\u2019s a championship about efficiency. During the race Attack Mode unlocks a short power boost after crossing a marked zone.'),
+        drivers: C('Současní: Pascal Wehrlein, Nick Cassidy, Mitch Evans, António Félix da Costa, Jake Dennis.', 'Today: Pascal Wehrlein, Nick Cassidy, Mitch Evans, António Félix da Costa, Jake Dennis.'),
+        circuit: { name: C('Městské okruhy', 'Street circuits'), t: C('Dočasné tratě v centrech měst — Monako, Berlín, Diriyah.', 'Temporary tracks in city centres — Monaco, Berlin, Diriyah.') },
+        fact: C('Vozy startují s omezenou energií — když dojde, závod končí.', 'Cars start with limited energy — run flat and your race is over.'),
+        teams: [
+          { id: 'porsche', name: 'TAG Heuer Porsche', blurb: C('Tovární Porsche s úřadujícím mistrem Pascalem Wehrleinem.', 'Factory Porsche with reigning champion Pascal Wehrlein.'), drivers: ['Pascal Wehrlein', 'António Félix da Costa'], cars: [{ name: 'Porsche 99X Electric', b: C('Porsche v elektrické sérii.', 'Porsche in the electric series.') }] },
+          { id: 'jaguar', name: 'Jaguar TCS Racing', blurb: C('Britská kočičí značka s ambicemi na titul.', 'The British cat brand with title ambitions.'), drivers: ['Mitch Evans', 'Nick Cassidy'], cars: [{ name: 'Jaguar I-Type 7', b: C('Britský elektromobil v boji o titul.', 'The British EV fighting for the title.') }] },
+          { id: 'nissan', name: 'Nissan Formula E', blurb: C('Japonská značka, dlouhodobý hráč Formule E.', 'A Japanese brand, a longtime Formula E player.'), drivers: ['Oliver Rowland', 'Norman Nato'], cars: [{ name: 'Nissan e-4ORCE 06', b: C('Japonský elektrický monopost.', 'A Japanese electric single-seater.') }] },
+          { id: 'mahindra', name: 'Mahindra Racing', blurb: C('Indický výrobce — jeden ze zakládajících účastníků série.', 'The Indian manufacturer — one of the series\u2019 founding entrants.'), drivers: ['Edoardo Mortara', 'Nyck de Vries'], cars: [{ name: 'Mahindra M11Electro', b: C('Indický elektrický monopost.', 'An Indian electric single-seater.') }] },
+          { id: 'ds', name: 'DS Penske', blurb: C('Francouzský DS spojený se zámořskou stájí Penske.', 'French DS allied with the American Penske squad.'), drivers: ['Jean-Éric Vergne', 'Maximilian Günther'], cars: [{ name: 'DS E-Tense FE25', b: C('Francouzský elektromobil v americkém týmu.', 'A French EV in an American squad.') }] },
+          { id: 'andretti', name: 'Andretti Formula E', blurb: C('Americká stáj rodiny Andretti.', 'The American Andretti family team.'), drivers: ['Jake Dennis', 'Nico Müller'], cars: [{ name: 'Porsche 99X Electric', b: C('Porsche v amerických týmových barvách.', 'Porsche in American team colours.') }] },
+          { id: 'mclarenfe', name: 'NEOM McLaren', blurb: C('Papayová značka i v elektrické sérii.', 'The papaya brand in the electric series, too.'), drivers: ['Sam Bird', 'Taylor Barnard'], cars: [{ name: 'Nissan e-4ORCE 06', b: C('Nissan v papayových barvách McLaren.', 'Nissan in McLaren\u2019s papaya colours.') }] },
+          { id: 'maserati', name: 'Maserati MSG', blurb: C('Italský luxus se vrací do závodění — ve Formuli E s týmem Stellantis.', 'Italian luxury returns to racing — in Formula E with the Stellantis squad.'), drivers: ['Stoffel Vandoorne', 'Jake Hughes'], cars: [{ name: 'Maserati Tipo Folgore', b: C('Italský elektrický monopost.', 'An Italian electric single-seater.') }] }
+        ]
+      },
+      {
+        id: 'indycar', cat: 'cars', accent: '#2453C7', full: true,
+        name: 'IndyCar', tagline: C('Americké formule — ovály i okruhy, přes 380 km/h.', 'American open-wheel — ovals and road courses past 380 km/h.'),
+        intro: C('IndyCar je vrcholná americká jednomístná série. Mísí rychlé ovály, městské okruhy i klasické tratě a vrcholí slavným závodem Indianapolis 500.', 'IndyCar is the top American open-wheel series, mixing superspeedway ovals, street circuits and road courses, crowned by the famous Indianapolis 500.'),
+        specs: [{ k: 'power', v: '~700 hp' }, { k: 'top', v: '~380 km/h' }, { k: 'drive', v: C('zadní / turbo V6 hybrid', 'rear / turbo V6 hybrid') }],
+        weekend: C('Krátké tréninky a kvalifikace, závod jezdí jen v neděli. Na Indy 500 je formát rozložen do celého května.', 'Brief practice and qualifying, race only on Sunday. For the Indy 500 the format spans the entire month of May.'),
+        drivers: C('Současní: Álex Palou, Scott Dixon, Pato O\u2019Ward, Josef Newgarden, Colton Herta. Legendy: A.J. Foyt, Mario Andretti.', 'Today: Álex Palou, Scott Dixon, Pato O\u2019Ward, Josef Newgarden, Colton Herta. Legends: A.J. Foyt, Mario Andretti.'),
+        circuit: { name: 'Indianapolis', t: C('Indianapolis Motor Speedway — legendární 2,5mílový ovál.', 'Indianapolis Motor Speedway — the legendary 2.5-mile oval.') },
+        fact: C('Indianapolis 500 patří mezi tzv. Trojkorunu motorsportu.', 'The Indy 500 is part of motorsport\u2019s Triple Crown.'),
+        teams: [
+          { id: 'ganassi', name: 'Chip Ganassi Racing', blurb: C('Domov trojnásobného mistra Álexe Palou a legendárního Scotta Dixona.', 'Home of three-time champion Álex Palou and legend Scott Dixon.'), drivers: ['Álex Palou', 'Scott Dixon', 'Kyffin Simpson'], cars: [{ name: 'Dallara DW12 / Honda', b: C('Pohon Honda — vůz vítězné stáje současnosti.', 'Honda-powered — the car of today\u2019s winning squad.') }] },
+          { id: 'penske', name: 'Team Penske', blurb: C('Nejúspěšnější stáj Indy 500 v historii — Newgarden tu vyhrál závod třikrát.', 'The most successful Indy 500 team in history — Newgarden has won the race three times.'), drivers: ['Josef Newgarden', 'Scott McLaughlin', 'Will Power'], cars: [{ name: 'Dallara DW12 / Chevrolet', b: C('Pohon Chevrolet, ikona amerických závodů.', 'Chevrolet-powered, an icon of US racing.') }] },
+          { id: 'arrow', name: 'Arrow McLaren', blurb: C('Papayová stáj v IndyCar s mladou hvězdou Pato O\u2019Wardem.', 'The papaya squad in IndyCar with rising star Pato O\u2019Ward.'), drivers: ['Pato O\u2019Ward', 'Christian Lundgaard', 'Nolan Siegel'], cars: [{ name: 'Dallara DW12 / Chevrolet', b: C('Chevrolet v papayových barvách.', 'A Chevrolet in papaya colours.') }] },
+          { id: 'andretti', name: 'Andretti Global', blurb: C('Stáj Mária Andrettiho s historií Indy 500 vítězství.', 'Mario Andretti\u2019s family team with Indy 500 wins in its history.'), drivers: ['Colton Herta', 'Kyle Kirkwood', 'Marcus Ericsson'], cars: [{ name: 'Dallara DW12 / Honda', b: C('Honda v barvách Andretti Global.', 'Honda in Andretti Global colours.') }] },
+          { id: 'meyer', name: 'Meyer Shank Racing', blurb: C('Menší tým s velkými výsledky — vítězem Indy 500 v roce 2021.', 'A smaller team with big results — 2021 Indy 500 winner.'), drivers: ['Felix Rosenqvist', 'Marcus Armstrong'], cars: [{ name: 'Dallara DW12 / Honda', b: C('Honda v barvách Meyer Shank.', 'Honda in Meyer Shank colours.') }] },
+          { id: 'rll', name: 'Rahal Letterman Lanigan', blurb: C('Tým Bobbyho Rahala, Davida Lettermana a Mika Lanigana.', 'The team of Bobby Rahal, David Letterman and Mike Lanigan.'), drivers: ['Graham Rahal', 'Devlin DeFrancesco', 'Louis Foster'], cars: [{ name: 'Dallara DW12 / Honda', b: C('Honda v týmových barvách RLL.', 'Honda in RLL colours.') }] }
+        ]
+      },
+      {
+        id: 'sf', cat: 'cars', accent: '#B81ED8', full: false,
+        name: 'Super Formula', tagline: C('Nejrychlejší formule mimo F1 — Japonsko.', 'The fastest single-seater outside F1 — Japan.'),
+        intro: C('Super Formula je japonská špičková jednomístná série, proslulá extrémně lehkými a rychlými vozy. Mnozí piloti F1 tu startovali nebo testovali.', 'Super Formula is Japan\u2019s top open-wheel series, famed for ultra-light, extremely fast cars. Many F1 drivers have raced or tested here.'),
+        specs: [{ k: 'power', v: '~550 hp' }, { k: 'drive', v: C('zadní / turbo', 'rear / turbo') }],
+        circuit: { name: 'Suzuka', t: C('Suzuka — ikonická trať ve tvaru osmičky.', 'Suzuka — the iconic figure-eight circuit.') },
+        fact: C('Vozy patří k nejrychlejším formulím na světě hned po F1.', 'These are among the fastest single-seaters on Earth after F1.')
+      },
+      {
+        id: 'wec', cat: 'cars', accent: '#19A974', full: true,
+        name: 'WEC', tagline: C('Vytrvalostní závody — od 6 hodin po legendární Le Mans.', 'Endurance racing — from 6 hours to the legendary Le Mans.'),
+        intro: C('Mistrovství světa ve vytrvalosti (WEC) staví prototypy Hypercar proti vozům GT3 v dlouhých závodech. Vrcholem je 24 hodin Le Mans, kde se posádky střídají dnem i nocí.', 'The World Endurance Championship (WEC) pits Hypercar prototypes against GT3 cars over long races. Its crown jewel is the 24 Hours of Le Mans, run through day and night with rotating crews.'),
+        specs: [{ k: 'power', v: '~680 hp' }, { k: 'top', v: '~340 km/h' }, { k: 'drive', v: C('různý / hybrid', 'varies / hybrid') }, { k: 'crew', v: C('3 jezdci', '3 drivers') }],
+        weekend: C('Závody trvají 6, 8 nebo 24 hodin. O výsledku rozhoduje strategie, spolehlivost a souhra celého týmu.', 'Races run 6, 8 or 24 hours. Strategy, reliability and teamwork decide the result.'),
+        drivers: C('Současní: Buemi, Hartley, Estre, Kubica, Calado. Legendy: Tom Kristensen, Jacky Ickx, Derek Bell.', 'Today: Buemi, Hartley, Estre, Kubica, Calado. Legends: Tom Kristensen, Jacky Ickx, Derek Bell.'),
+        history: [C('1923 — první ročník 24 hodin Le Mans.', '1923 — the first 24 Hours of Le Mans.'), C('1970 — éra Porsche 917, zvěčněná i ve filmu se Stevem McQueenem.', '1970 — the Porsche 917 era, immortalised on film.'), C('2023 — návrat Ferrari, Porsche i Cadillacu do třídy Hypercar.', '2023 — Ferrari, Porsche and Cadillac return to the Hypercar class.'), C('2025 — Robert Kubica s privátním žlutým Ferrari #83 vyhrál Le Mans.', '2025 — Robert Kubica wins Le Mans in the private yellow #83 Ferrari.')],
+        circuit: { name: 'Circuit de la Sarthe', t: C('Le Mans — přes 13 km dlouhý okruh vedoucí zčásti po běžných silnicích.', 'Le Mans — an over-13 km circuit run partly on public roads.') },
+        fact: C('Vítězný vůz v Le Mans ujede za 24 hodin přes 5000 kilometrů.', 'A winning Le Mans car covers over 5000 km in 24 hours.'),
+        teamCats: [{ key: 'hypercar', label: C('Hypercar', 'Hypercar') }, { key: 'lmp2', label: C('LMP2', 'LMP2') }, { key: 'lmgt3', label: C('LMGT3', 'LMGT3') }],
+        teams: [
+          { id: 'ferrari-50', cat: 'hypercar', name: 'Ferrari AF Corse #50', blurb: C('Tovární rudé Ferrari — vítěz Le Mans 2024 s Fuocem, Molinou a Nielsenem.', 'The factory red Ferrari — 2024 Le Mans winner with Fuoco, Molina and Nielsen.'), drivers: ['Antonio Fuoco', 'Miguel Molina', 'Nicklas Nielsen'], cars: [{ name: '499P', b: C('Vítězný Hypercar z Le Mans 2024.', 'The Le Mans 2024-winning Hypercar.') }] },
+          { id: 'ferrari-51', cat: 'hypercar', name: 'Ferrari AF Corse #51', blurb: C('Druhý tovární vůz — vítěz Le Mans 2023 v posádce Pier Guidi / Calado / Giovinazzi.', 'The second factory car — 2023 Le Mans winner with Pier Guidi, Calado and Giovinazzi.'), drivers: ['Alessandro Pier Guidi', 'James Calado', 'Antonio Giovinazzi'], cars: [{ name: '499P', b: C('Hypercar, který vrátil Ferrari do Le Mans.', 'The Hypercar that brought Ferrari back to Le Mans.') }] },
+          { id: 'ferrari-83', cat: 'hypercar', name: 'Ferrari AF Corse #83', blurb: C('Žluté privátní Ferrari Roberta Kubici — senzace Le Mans 2025, kdy soukromá posádka porazila tovární vozy.', 'The yellow private Ferrari of Robert Kubica — the Le Mans 2025 sensation when a private crew beat the works cars.'), drivers: ['Robert Kubica', 'Ye Yifei', 'Phil Hanson'], cars: [{ name: '499P', b: C('Privátní žluté Ferrari — vítěz Le Mans 2025.', 'The private yellow Ferrari — 2025 Le Mans winner.') }] },
+          { id: 'toyota-7', cat: 'hypercar', name: 'Toyota Gazoo Racing #7', blurb: C('Posádka Conway / Kobayashi / de Vries v tradičním červeno-bílém zbarvení.', 'The Conway / Kobayashi / de Vries crew in traditional red-and-white colours.'), drivers: ['Mike Conway', 'Kamui Kobayashi', 'Nyck de Vries'], cars: [{ name: 'GR010 Hybrid', b: C('Sedmička z Japonska.', 'The Japanese #7.') }] },
+          { id: 'toyota-8', cat: 'hypercar', name: 'Toyota Gazoo Racing #8', blurb: C('Posádka Buemi / Hartley / Hirakawa — dvojnásobní vítězové Le Mans.', 'The Buemi / Hartley / Hirakawa crew — two-time Le Mans winners.'), drivers: ['Sébastien Buemi', 'Brendon Hartley', 'Ryō Hirakawa'], cars: [{ name: 'GR010 Hybrid', b: C('Osmička s historií vítězství v Le Mans.', 'The #8 with a Le Mans-winning history.') }] },
+          { id: 'porsche-5', cat: 'hypercar', name: 'Porsche Penske #5', blurb: C('Porsche v posádce Campbell / Christensen / Makowiecki.', 'Porsche with the Campbell / Christensen / Makowiecki crew.'), drivers: ['Matt Campbell', 'Michael Christensen', 'Frédéric Makowiecki'], cars: [{ name: '963', b: C('Hypercar s technikou LMDh.', 'The LMDh Hypercar.') }] },
+          { id: 'porsche-6', cat: 'hypercar', name: 'Porsche Penske #6', blurb: C('Posádka Estre / Lotterer / Vanthoor — favorité kalendáře.', 'The Estre / Lotterer / Vanthoor crew — calendar favourites.'), drivers: ['Kévin Estre', 'André Lotterer', 'Laurens Vanthoor'], cars: [{ name: '963', b: C('Druhý tovární Porsche 963.', 'The second works 963.') }] },
+          { id: 'cadillac-12', cat: 'hypercar', name: 'Cadillac Jota #12', blurb: C('Americký V8 v britských rukou — posádka Lynn / Stevens / Nato.', 'An American V8 in British hands — Lynn / Stevens / Nato crew.'), drivers: ['Alex Lynn', 'Will Stevens', 'Norman Nato'], cars: [{ name: 'V-Series.R', b: C('Americký Hypercar s atmosférickým V8.', 'An American Hypercar with a naturally aspirated V8.') }] },
+          { id: 'cadillac-38', cat: 'hypercar', name: 'Cadillac Jota #38', blurb: C('Druhý Cadillac s Bambermem, Buttonem a Hirakawou.', 'The second Cadillac with Bamber, Button and Hirakawa.'), drivers: ['Earl Bamber', 'Jenson Button', 'Sébastien Bourdais'], cars: [{ name: 'V-Series.R', b: C('Druhý Cadillac týmu Jota.', 'Jota\u2019s second Cadillac.') }] },
+          { id: 'peugeot-93', cat: 'hypercar', name: 'Peugeot #93', blurb: C('Francouzský Hypercar v posádce Jensen / Müller / Vergne.', 'The French Hypercar with the Jensen / Müller / Vergne crew.'), drivers: ['Mikkel Jensen', 'Nico Müller', 'Jean-Éric Vergne'], cars: [{ name: '9X8', b: C('Hypercar bez velkého zadního křídla.', 'A Hypercar without a big rear wing.') }] },
+          { id: 'peugeot-94', cat: 'hypercar', name: 'Peugeot #94', blurb: C('Druhý Peugeot s Duvalem, Di Restou a Vandoornem.', 'The second Peugeot with Duval, Di Resta and Vandoorne.'), drivers: ['Loïc Duval', 'Paul Di Resta', 'Stoffel Vandoorne'], cars: [{ name: '9X8', b: C('Druhý francouzský Hypercar.', 'The second French Hypercar.') }] },
+          { id: 'bmw-15', cat: 'hypercar', name: 'BMW M Team WRT #15', blurb: C('Bavorská patnáctka — Vanthoor / Marciello / Wittmann.', 'The Bavarian #15 — Vanthoor / Marciello / Wittmann.'), drivers: ['Dries Vanthoor', 'Raffaele Marciello', 'Marco Wittmann'], cars: [{ name: 'M Hybrid V8', b: C('Bavorský LMDh prototyp.', 'Bavaria\u2019s LMDh prototype.') }] },
+          { id: 'bmw-20', cat: 'hypercar', name: 'BMW M Team WRT #20', blurb: C('Posádka van der Linde / Frijns / Rast.', 'The van der Linde / Frijns / Rast crew.'), drivers: ['Sheldon van der Linde', 'Robin Frijns', 'René Rast'], cars: [{ name: 'M Hybrid V8', b: C('Druhý bavorský Hypercar.', 'The second Bavarian Hypercar.') }] },
+          { id: 'alpine-35', cat: 'hypercar', name: 'Alpine #35', blurb: C('Modrý francouzský LMDh — Milesi / Schumacher / Chatin.', 'The blue French LMDh — Milesi / Schumacher / Chatin.'), drivers: ['Charles Milesi', 'Mick Schumacher', 'Paul-Loup Chatin'], cars: [{ name: 'A424', b: C('Lehký francouzský LMDh.', 'A light French LMDh.') }] },
+          { id: 'alpine-36', cat: 'hypercar', name: 'Alpine #36', blurb: C('Posádka Vaxiviere / Lapierre / Habsburg.', 'The Vaxiviere / Lapierre / Habsburg crew.'), drivers: ['Matthieu Vaxiviere', 'Nicolas Lapierre', 'Ferdinand Habsburg'], cars: [{ name: 'A424', b: C('Druhý vůz Alpine.', 'Alpine\u2019s second car.') }] },
+          { id: 'aston-007', cat: 'hypercar', name: 'Aston Martin THOR #007', blurb: C('Valkyrie s motorem V12 v jamesbondovském čísle 007.', 'A V12 Valkyrie wearing the iconic 007.'), drivers: ['Harry Tincknell', 'Tom Gamble', 'Alex Riberas'], cars: [{ name: 'Valkyrie LMH', b: C('Hypercar postavený ze silniční Valkyrie.', 'A Hypercar derived from the road Valkyrie.') }] },
+          { id: 'aston-009', cat: 'hypercar', name: 'Aston Martin THOR #009', blurb: C('Druhý Aston Martin v posádce Sørensen / Mateu.', 'The second Aston Martin with the Sørensen / Mateu crew.'), drivers: ['Marco Sørensen', 'Roman De Angelis', 'Ross Gunn'], cars: [{ name: 'Valkyrie LMH', b: C('Druhý vůz THOR Teamu.', 'The THOR Team\u2019s second car.') }] },
+          { id: 'genesis', cat: 'hypercar', name: 'Genesis Magma Racing', blurb: C('Korejský nováček pro sezonu 2026 — luxusní značka skupiny Hyundai.', 'A Korean newcomer for 2026 — Hyundai Group\u2019s luxury brand.'), drivers: ['André Lotterer', 'Pipo Derani'], cars: [{ name: 'GMR-001', b: C('První Hypercar značky Genesis.', 'Genesis\u2019s first Hypercar.') }] },
+          { id: 'united-p2', cat: 'lmp2', name: 'United Autosports', blurb: C('Britský tým Zaka Browna (šéf McLarenu) — opora kategorie LMP2.', 'A British team co-owned by McLaren\u2019s Zak Brown — an LMP2 mainstay.'), drivers: ['Oliver Jarvis', 'Bijoy Garg', 'Daniel Schneider'], cars: [{ name: 'Oreca 07', b: C('Standardní LMP2 prototyp.', 'The standard LMP2 prototype.') }] },
+          { id: 'wrt-p2', cat: 'lmp2', name: 'Team WRT', blurb: C('Belgická stáj s velkou stopou v LMP2 i GT3.', 'A Belgian squad with deep roots in both LMP2 and GT3.'), drivers: ['Rui Andrade', 'Louis Delétraz', 'Robin Frijns'], cars: [{ name: 'Oreca 07', b: C('LMP2 prototyp s pohonem Gibson V8.', 'An LMP2 prototype with a Gibson V8.') }] },
+          { id: 'inter-p2', cat: 'lmp2', name: 'Inter Europol Competition', blurb: C('Polský tým — vítěz LMP2 v Le Mans 2023.', 'A Polish team — LMP2 winner at Le Mans 2023.'), drivers: ['Jakub Śmiechowski', 'Tom Dillmann', 'Nick Yelloly'], cars: [{ name: 'Oreca 07', b: C('Vítězný LMP2 prototyp.', 'A race-winning LMP2 prototype.') }] },
+          { id: 'ao-p2', cat: 'lmp2', name: 'AO by TF', blurb: C('Stáj Toma Brady (NFL) a Toma Wilkinsona — americký projekt v Evropě.', 'A team co-owned by NFL\u2019s Tom Brady — an American project in Europe.'), drivers: ['PJ Hyett', 'Alex Quinn', 'Louis Delétraz'], cars: [{ name: 'Oreca 07', b: C('LMP2 prototyp v týmových barvách AO.', 'An LMP2 prototype in AO colours.') }] },
+          { id: 'vector-p2', cat: 'lmp2', name: 'Vector Sport', blurb: C('Britská stáj v LMP2 — stálice vytrvalostních závodů.', 'A British LMP2 squad — an endurance fixture.'), drivers: ['Ryan Cullen', 'Stéphane Richelmi', 'Matthias Kaiser'], cars: [{ name: 'Oreca 07', b: C('Britsky řízený LMP2.', 'A British-run LMP2.') }] },
+          { id: 'manthey', cat: 'lmgt3', name: 'Manthey PureRxcing', blurb: C('Tovární partner Porsche v LMGT3 s vozem 911 GT3 R.', 'Porsche\u2019s LMGT3 factory partner with the 911 GT3 R.'), drivers: ['Klaus Bachler', 'Alex Malykhin', 'Joel Sturm'], cars: [{ name: 'Porsche 911 GT3 R', b: C('Tovární Porsche GT3.', 'A factory Porsche GT3.') }] },
+          { id: 'heart-gt', cat: 'lmgt3', name: 'Heart of Racing', blurb: C('Tovární tým Astonu Martina v LMGT3 — známý charitativní misí.', 'Aston Martin\u2019s LMGT3 factory team — known for its charity mission.'), drivers: ['Ian James', 'Mattia Drudi', 'Daniel Mancinelli'], cars: [{ name: 'Aston Martin Vantage AMR GT3', b: C('Britský GT3 vůz.', 'A British GT3 car.') }] },
+          { id: 'tf-gt', cat: 'lmgt3', name: 'TF Sport', blurb: C('Britská stáj s novým Corvette Z06 GT3.R pro 2026.', 'A British squad with the new Corvette Z06 GT3.R for 2026.'), drivers: ['Tom van Rompuy', 'Rui Andrade', 'Charlie Eastwood'], cars: [{ name: 'Corvette Z06 GT3.R', b: C('Americký GT3 vůz s motorem V8.', 'An American GT3 car with a V8.') }] },
+          { id: 'iron-dames', cat: 'lmgt3', name: 'Iron Dames', blurb: C('Plně ženská posádka v Porsche 911 GT3 R.', 'An all-female crew in the Porsche 911 GT3 R.'), drivers: ['Rahel Frey', 'Michelle Gatting', 'Sarah Bovy'], cars: [{ name: 'Porsche 911 GT3 R', b: C('Porsche s ženskou tříčlennou posádkou.', 'A Porsche with an all-female trio.') }] },
+          { id: 'akkodis-gt', cat: 'lmgt3', name: 'Akkodis ASP Team', blurb: C('Tovární partner Lexusu v LMGT3 s japonským kupé.', 'Lexus\u2019s LMGT3 factory partner with the Japanese coupé.'), drivers: ['Petru Umbrarescu', 'Clemens Schmid', 'José María López'], cars: [{ name: 'Lexus RC F GT3', b: C('Japonský GT3 vůz s V8.', 'A Japanese GT3 car with a V8.') }] },
+          { id: 'wrt-gt', cat: 'lmgt3', name: 'WRT BMW', blurb: C('Belgická stáj WRT s tovární podporou BMW v LMGT3.', 'The Belgian WRT squad with BMW factory backing in LMGT3.'), drivers: ['Augusto Farfus', 'Maxime Martin', 'Valentino Rossi'], cars: [{ name: 'BMW M4 GT3 Evo', b: C('Bavorský GT3 vůz.', 'A Bavarian GT3 car.') }] },
+          { id: 'iron-lambo', cat: 'lmgt3', name: 'Iron Lynx Lamborghini', blurb: C('Italský tým s továrním Lamborghini Huracán GT3 Evo2.', 'An Italian team with the factory Lamborghini Huracán GT3 Evo2.'), drivers: ['Andrea Caldarelli', 'Matteo Cairoli', 'Claudio Schiavoni'], cars: [{ name: 'Lamborghini Huracán GT3 Evo2', b: C('Býk z Bologně v GT3 spec.', 'The Bologna bull in GT3 spec.') }] },
+          { id: 'united-mc', cat: 'lmgt3', name: 'United Autosports McLaren', blurb: C('McLaren v LMGT3 s britskou stájí United.', 'McLaren in LMGT3 with the British United squad.'), drivers: ['Grégoire Saucy', 'James Cottingham', 'Nico Pino'], cars: [{ name: 'McLaren 720S GT3 Evo', b: C('Papayový GT3 vůz.', 'A papaya GT3 car.') }] }
+        ]
+      },
+      {
+        id: 'imsa', cat: 'cars', accent: '#E8A11E', full: false,
+        name: 'IMSA', tagline: C('Americké vytrvalostní závody — sesterský seriál WEC.', 'American endurance racing — WEC\u2019s sister series.'),
+        intro: C('IMSA SportsCar Championship je přední americká vytrvalostní série. Její prototypy GTP sdílejí techniku s Hypercary WEC a sezona začíná legendárními 24 hodinami Daytony.', 'The IMSA SportsCar Championship is North America\u2019s premier endurance series; its GTP prototypes share tech with WEC Hypercars and the season opens with the famous Rolex 24 at Daytona.'),
+        specs: [{ k: 'power', v: '~680 hp' }, { k: 'drive', v: C('hybrid', 'hybrid') }],
+        circuit: { name: 'Daytona', t: C('24 hodin Daytony — sezona startuje nejtěžším testem.', 'The Rolex 24 at Daytona — the season opens with its toughest test.') },
+        fact: C('Daytona má klopené zatáčky sdílené s oválem NASCAR.', 'Daytona\u2019s banking is shared with the NASCAR oval.')
+      },
+      {
+        id: 'gtwc', cat: 'cars', accent: '#7A3CE8', full: false,
+        name: 'GT World Challenge', tagline: C('Sportovní vozy GT3 — Ferrari, Porsche, Lamborghini.', 'GT3 sports cars — Ferrari, Porsche, Lamborghini.'),
+        intro: C('GT World Challenge je přední série sériově odvozených sportovních vozů GT3. Profesionálové i bohatí amatéři tu závodí bok po boku a vrcholem je 24 hodin ve Spa.', 'GT World Challenge is the leading series for production-based GT3 sports cars, where pros and gentleman drivers race side by side, headlined by the 24 Hours of Spa.'),
+        specs: [{ k: 'power', v: '~550 hp' }, { k: 'drive', v: C('různý', 'varies') }],
+        circuit: { name: 'Spa-Francorchamps', t: C('Spa — legendární stoupání Eau Rouge a 24hodinový závod.', 'Spa — the legendary Eau Rouge and a 24-hour race.') },
+        fact: C('Vozy GT3 řídí profesionálové i amatéři ve stejném závodě.', 'GT3 grids mix professional drivers with amateurs in the same race.')
+      },
+      {
+        id: 'nascar', cat: 'cars', accent: '#1E59C7', full: true,
+        name: 'NASCAR', tagline: C('Americké stock cary — nárazník na nárazník na oválech.', 'American stock cars — bumper-to-bumper on the ovals.'),
+        intro: C('NASCAR Cup Series je nejsledovanější americká série. Těžké stock cary závodí převážně na rychlých oválech v hustých skupinách, kde jezdci využívají aerodynamický zákryt soupeřů.', 'The NASCAR Cup Series is America\u2019s most-watched racing. Heavy stock cars run mostly on high-speed ovals in tight packs, riding each other\u2019s aerodynamic draft.'),
+        specs: [{ k: 'power', v: '~670 hp' }, { k: 'top', v: '~320 km/h' }, { k: 'drive', v: C('zadní / V8', 'rear / V8') }, { k: 'weight', v: '~1500 kg' }],
+        weekend: C('Kvalifikace a dlouhý závod (často přes 500 km a 200+ kol), přerušovaný neutralizacemi za bezpečnostním vozem.', 'Qualifying plus a long race (often 500 km and 200+ laps), punctuated by caution periods behind the pace car.'),
+        drivers: C('Současní: Larson, Hamlin, Elliott. Legendy: Dale Earnhardt, Richard Petty, Jeff Gordon.', 'Today: Larson, Hamlin, Elliott. Legends: Dale Earnhardt, Richard Petty, Jeff Gordon.'),
+        history: [C('1948 — založení NASCAR na Floridě.', '1948 — NASCAR founded in Florida.'), C('1979 — první živě přenášený Daytona 500 zakončený rvačkou v cíli.', '1979 — the first flag-to-flag Daytona 500, ending in a fistfight.'), C('2001 — tragická smrt Dale Earnhardta v Daytoně.', '2001 — Dale Earnhardt\u2019s fatal crash at Daytona.')],
+        circuit: { name: 'Daytona International Speedway', t: C('Daytona 500 — nejprestižnější závod sezony, jezdí se hned na úvod.', 'The Daytona 500 — the season\u2019s most prestigious race, run first.') },
+        fact: C('Na oválu jedou auta tak blízko, že se vzájemně \u201etáhnou\u201c vzduchem.', 'On the oval, cars run so close they tow each other through the air in the draft.'),
+        teams: [
+          { id: 'hendrick', name: 'Hendrick Motorsports', blurb: C('Nejúspěšnější tým moderní éry s rekordními zisky šampionátu Cup Series.', 'The most successful team of the modern era with a record number of Cup titles.'), drivers: ['Kyle Larson', 'Chase Elliott', 'William Byron', 'Alex Bowman'], cars: [{ name: 'Chevrolet Camaro ZL1', b: C('Stock car vítězné stáje.', 'The stock car of the winningest squad.') }] },
+          { id: 'gibbs', name: 'Joe Gibbs Racing', blurb: C('Tým založený trenérem NFL Joem Gibbsem, dlouhodobá stálice na špici.', 'Founded by NFL coach Joe Gibbs, a perennial frontrunner.'), drivers: ['Denny Hamlin', 'Christopher Bell', 'Chase Briscoe', 'Ty Gibbs'], cars: [{ name: 'Toyota Camry XSE', b: C('Stock car týmu Joe Gibbs Racing.', 'The Joe Gibbs Racing stock car.') }] },
+          { id: 'penske', name: 'Team Penske', blurb: C('Elitní stáj napříč celým americkým motorsportem — Cup, IndyCar i Le Mans.', 'An elite operation across US motorsport — Cup, IndyCar and Le Mans.'), drivers: ['Joey Logano', 'Ryan Blaney', 'Austin Cindric'], cars: [{ name: 'Ford Mustang Dark Horse', b: C('Stock car týmu Penske.', 'The Penske stock car.') }] },
+          { id: 'x23', name: '23XI Racing', blurb: C('Mladý tým spoluvlastněný Denny Hamlinem a Michaelem Jordanem.', 'A young team co-owned by Denny Hamlin and Michael Jordan.'), drivers: ['Tyler Reddick', 'Bubba Wallace', 'Riley Herbst'], cars: [{ name: 'Toyota Camry XSE', b: C('Stroj Jordanova týmu.', 'The car of Jordan\u2019s team.') }] },
+          { id: 'trackhouse', name: 'Trackhouse Racing', blurb: C('Tým spoluvlastněný Pitbullem — známý odvážnými projekty a hostováním cizinců.', 'Team co-owned by Pitbull — known for bold projects and inviting outsiders.'), drivers: ['Daniel Suárez', 'Ross Chastain', 'Shane van Gisbergen', 'Connor Zilisch'], cars: [{ name: 'Chevrolet Camaro ZL1', b: C('Chevrolet v barvách Trackhouse.', 'A Chevrolet in Trackhouse colours.') }] },
+          { id: 'rfk', name: 'RFK Racing', blurb: C('Pokračování legendárního Roush Racing — Brad Keselowski je tu spolumajitelem.', 'The continuation of legendary Roush Racing — Brad Keselowski is co-owner.'), drivers: ['Brad Keselowski', 'Chris Buescher', 'Ryan Preece'], cars: [{ name: 'Ford Mustang Dark Horse', b: C('Ford v týmových barvách RFK.', 'A Ford in RFK colours.') }] },
+          { id: 'spire', name: 'Spire Motorsports', blurb: C('Mladá stáj v rychlém vzestupu, posílena přestupy z velkých týmů.', 'A young squad on a rapid rise, bolstered by big-team signings.'), drivers: ['Michael McDowell', 'Carson Hocevar', 'Justin Haley'], cars: [{ name: 'Chevrolet Camaro ZL1', b: C('Chevrolet v barvách Spire.', 'A Chevrolet in Spire colours.') }] },
+          { id: 'legacy', name: 'Legacy Motor Club', blurb: C('Tým Jimmieho Johnsona — sedminásobného šampiona Cupu.', 'The team of seven-time Cup champion Jimmie Johnson.'), drivers: ['John Hunter Nemechek', 'Erik Jones'], cars: [{ name: 'Toyota Camry XSE', b: C('Toyota v barvách Legacy MC.', 'A Toyota in Legacy MC colours.') }] }
+        ]
+      },
+      {
+        id: 'supercars', cat: 'cars', accent: '#E8861E', full: false,
+        name: 'Supercars', tagline: C('Australské stock cary — souboje motorů V8.', 'Australian stock cars — V8 battles.'),
+        intro: C('Supercars je australská série cestovních/stock vozů s motory V8. Slyne tvrdým závoděním a jejím vrcholem je vytrvalostní Bathurst 1000.', 'Supercars is Australia\u2019s V8 touring/stock car series, famous for hard racing and headlined by the Bathurst 1000 enduro.'),
+        specs: [{ k: 'power', v: '~600 hp' }, { k: 'drive', v: C('zadní / V8', 'rear / V8') }],
+        circuit: { name: 'Mount Panorama', t: C('Bathurst — úzký horský okruh s obrovským převýšením.', 'Bathurst — a narrow mountain circuit with huge elevation change.') },
+        fact: C('Bathurst 1000 je pro Australany svátkem jako pro Evropu Le Mans.', 'The Bathurst 1000 is a national institution in Australia.')
+      },
+      {
+        id: 'btcc', cat: 'cars', accent: '#1EB5E8', full: false,
+        name: 'BTCC / WTCR', tagline: C('Cestovní vozy — kontaktní závodění z výroby.', 'Touring cars — contact racing from the showroom.'),
+        intro: C('Cestovní vozy vycházejí ze sériových aut a slynou tvrdým, kontaktním závoděním. BTCC je nejdrsnější národní šampionát, WTCR jeho mezinárodní obdoba.', 'Touring cars are based on road models and are famous for hard, contact-heavy racing. BTCC is the toughest national championship; WTCR was its global counterpart.'),
+        specs: [{ k: 'power', v: '~350 hp' }, { k: 'drive', v: C('přední / zadní', 'front / rear') }],
+        circuit: { name: 'Brands Hatch', t: C('Brands Hatch — britská klasika nabitá fanoušky.', 'Brands Hatch — a British classic packed with fans.') },
+        fact: C('Vozy vozí handicapovou zátěž, aby byly závody vyrovnané.', 'Cars carry success ballast to keep the racing tight.')
+      },
+      {
+        id: 'motogp', cat: 'bikes', accent: '#FF6B00', full: true,
+        name: 'MotoGP', tagline: C('Královna motocyklových závodů — prototypy na hraně fyziky.', 'The premier class of bike racing — prototypes at the edge of physics.'),
+        intro: C('MotoGP je nejvyšší třída silničních motocyklů. Tovární prototypy se naklánějí přes 60° a jezdci se loktem dotýkají asfaltu při rychlostech přes 350 km/h.', 'MotoGP is the top class of road racing. Factory prototypes lean past 60° with riders dragging their elbows on the tarmac at over 350 km/h.'),
+        specs: [{ k: 'power', v: '~290 hp' }, { k: 'top', v: '~360 km/h' }, { k: 'weight', v: '157 kg' }, { k: 'engine', v: '1000 cc' }],
+        weekend: C('Tréninky, kvalifikace o startovní pozice, sobotní sprint a hlavní nedělní závod.', 'Practice, qualifying for grid position, a Saturday sprint and the main Sunday race.'),
+        drivers: C('Současní: Bagnaia, Martín, Márquez. Legendy: Valentino Rossi, Giacomo Agostini.', 'Today: Bagnaia, Martín, Márquez. Legends: Valentino Rossi, Giacomo Agostini.'),
+        history: [C('1949 — první ročník mistrovství světa silničních motocyklů.', '1949 — the first motorcycle road racing World Championship.'), C('2002 — přechod na čtyřdobé prototypy MotoGP.', '2002 — the switch to four-stroke MotoGP prototypes.'), C('Éra Valentina Rossiho proměnila sport v globální fenomén.', 'Valentino Rossi\u2019s era turned the sport into a global phenomenon.')],
+        circuit: { name: 'Mugello', t: C('Mugello — rychlý italský okruh a chrám fanoušků Ducati.', 'Mugello — a fast Italian circuit and a temple for Ducati fans.') },
+        fact: C('Při brzdění zažívají jezdci přetížení, které je doslova tlačí přes řídítka.', 'Under braking riders endure forces that try to throw them over the handlebars.'),
+        teams: [
+          { id: 'ducati', name: 'Ducati Lenovo Team', blurb: C('Tovární Ducati — domov Marca Márqueze a Pecca Bagnaii. Dominantní stáj současnosti.', 'The factory Ducati — home of Marc Márquez and Pecco Bagnaia. The current dominant force.'), drivers: ['Marc Márquez', 'Francesco Bagnaia'], cars: [{ name: 'Desmosedici GP26', b: C('Vrcholný prototyp z Borgo Panigale.', 'The flagship prototype from Borgo Panigale.') }] },
+          { id: 'aprilia', name: 'Aprilia Racing', blurb: C('Italská značka z Noale s úřadujícím mistrem světa Jorgem Martínem.', 'The Italian Noale brand with reigning world champion Jorge Martín.'), drivers: ['Jorge Martín', 'Marco Bezzecchi'], cars: [{ name: 'RS-GP26', b: C('Italský stroj bojující o čelo.', 'The Italian machine fighting for the front.') }] },
+          { id: 'ktm', name: 'Red Bull KTM Factory', blurb: C('Rakouská tovární stáj. Pedro Acosta je tu jejím největším eso budoucnosti.', 'The Austrian factory squad. Pedro Acosta is its brightest future star.'), drivers: ['Pedro Acosta', 'Brad Binder'], cars: [{ name: 'RC16', b: C('Rakouský útok na vítězství.', 'Austria\u2019s charge for wins.') }] },
+          { id: 'yamaha', name: 'Monster Energy Yamaha', blurb: C('Japonská legenda a domov Rossiho éry. Quartararo zůstává věrný modré.', 'A Japanese legend and home of the Rossi era. Quartararo stays loyal to blue.'), drivers: ['Fabio Quartararo', 'Álex Rins'], cars: [{ name: 'YZR-M1', b: C('Řadový čtyřválec s bohatou historií.', 'The inline-four with a rich history.') }] },
+          { id: 'honda', name: 'Honda HRC Castrol', blurb: C('Nejúspěšnější značka v historii Grand Prix, hledající návrat na špici.', 'The most successful brand in GP history, fighting back to the front.'), drivers: ['Joan Mir', 'Luca Marini'], cars: [{ name: 'RC213V', b: C('Stroj rekordní značky GP.', 'The bike of GP\u2019s record-setting brand.') }] },
+          { id: 'vr46', name: 'Pertamina Enduro VR46', blurb: C('Tým Valentina Rossiho na továrních Ducati.', 'Valentino Rossi\u2019s squad on factory-spec Ducatis.'), drivers: ['Franco Morbidelli', 'Fabio Di Giannantonio'], cars: [{ name: 'Desmosedici GP', b: C('Ducati v žluto-modrých barvách Akademie.', 'Ducati in the yellow-blue Academy colours.') }] },
+          { id: 'gresini', name: 'Gresini Racing', blurb: C('Tradiční italský tým s mladým Aldeguerem a Álexem Márquezem.', 'A storied Italian team with rookie Aldeguer alongside Álex Márquez.'), drivers: ['Álex Márquez', 'Fermín Aldeguer'], cars: [{ name: 'Desmosedici GP', b: C('Satelitní Ducati v týmových barvách.', 'A satellite Ducati in team livery.') }] },
+          { id: 'trackhouse', name: 'Trackhouse Racing', blurb: C('Americký satelit Aprilie — most mezi MotoGP a publikem v USA.', 'Aprilia\u2019s American satellite — a bridge between MotoGP and US fans.'), drivers: ['Raúl Fernández', 'Ai Ogura'], cars: [{ name: 'RS-GP', b: C('Aprilia v amerických barvách.', 'Aprilia in American colours.') }] },
+          { id: 'tech3', name: 'Red Bull KTM Tech3', blurb: C('Francouzský satelit KTM, líheň talentů Hervé Poncharala.', 'KTM\u2019s French satellite, Hervé Poncharal\u2019s talent factory.'), drivers: ['Maverick Viñales', 'Enea Bastianini'], cars: [{ name: 'RC16', b: C('KTM v týmových barvách Tech3.', 'KTM in Tech3 colours.') }] },
+          { id: 'lcr', name: 'LCR Honda', blurb: C('Monacký satelit Hondy, dlouhodobá značka v paddocku.', 'Honda\u2019s long-standing Monaco-based satellite.'), drivers: ['Johann Zarco', 'Somkiat Chantra'], cars: [{ name: 'RC213V', b: C('Honda v týmových barvách LCR.', 'Honda in LCR colours.') }] },
+          { id: 'pramac', name: 'Prima Pramac Yamaha', blurb: C('Někdejší satelit Ducati, od roku 2025 partner Yamahy.', 'Formerly a Ducati satellite, a Yamaha partner since 2025.'), drivers: ['Miguel Oliveira', 'Jack Miller'], cars: [{ name: 'YZR-M1', b: C('Yamaha v barvách Pramacu.', 'Yamaha in Pramac colours.') }] }
+        ]
+      },
+      {
+        id: 'moto2', cat: 'bikes', accent: '#1E9EE8', full: false,
+        name: 'Moto2', tagline: C('Střední třída GP — jednotné motory, čistý souboj.', 'The GP middle class — spec engines, pure combat.'),
+        intro: C('Moto2 je předposlední stupeň cesty do MotoGP. Všechny stroje sdílejí stejný motor, takže rozhoduje jezdec a podvozek. Souboje tu bývají nejtěsnější v paddocku.', 'Moto2 is the penultimate step to MotoGP. Every bike shares the same engine, so rider and chassis decide — and the racing is among the closest in the paddock.'),
+        specs: [{ k: 'power', v: '~140 hp' }, { k: 'engine', v: '765 cc' }],
+        circuit: { name: 'Jerez', t: C('Jezdí jako součást víkendů MotoGP.', 'Runs as part of MotoGP weekends.') },
+        fact: C('Stejný motor pro všechny dělá ze soubojů ryzí souboj jezdců.', 'A single spec engine makes it a pure rider-versus-rider fight.')
+      },
+      {
+        id: 'moto3', cat: 'bikes', accent: '#15C26E', full: false,
+        name: 'Moto3', tagline: C('Nejnižší třída GP — mladíci v obřích skupinách.', 'The entry GP class — teenagers in giant packs.'),
+        intro: C('Moto3 je vstupní mistrovství GP pro nejmladší talenty. Malé motorky jezdí v obrovských skupinách a v zákrytu, kde se vítěz často rozhoduje až v posledním metru.', 'Moto3 is the entry GP championship for the youngest talents. Small bikes race in huge slipstreaming packs, with wins often decided in the final metre.'),
+        specs: [{ k: 'power', v: '~60 hp' }, { k: 'engine', v: '250 cc' }],
+        circuit: { name: C('Po celém světě', 'Worldwide'), t: C('Součást víkendů MotoGP po celém světě.', 'Part of MotoGP weekends worldwide.') },
+        fact: C('Vítězí se často až v posledním metru po souboji desítek strojů.', 'Wins are often decided in the final metre after a multi-bike scrap.')
+      },
+      {
+        id: 'wsbk', cat: 'bikes', accent: '#E81E2D', full: true,
+        name: 'WorldSBK', tagline: C('Superbiky — závodí stroje, co koupíš v obchodě.', 'Superbikes — racing the machines you can buy.'),
+        intro: C('Mistrovství světa superbiků staví proti sobě upravené sériové motorky. Je blíž běžnému světu než prototypy MotoGP — vítězné stroje jsou příbuzné těm v showroomu.', 'The Superbike World Championship races modified production motorcycles, closer to the road than MotoGP prototypes — winning bikes are cousins of showroom models.'),
+        specs: [{ k: 'power', v: '~230 hp' }, { k: 'engine', v: '1000 cc' }],
+        weekend: C('Víkend má tři závody: dva plné v sobotu a neděli a sprintový Superpole Race v neděli ráno.', 'A weekend has three races: two full races on Saturday and Sunday, plus the Superpole Race sprint on Sunday morning.'),
+        drivers: C('Současní: Toprak Razgatlıoğlu, Nicolò Bulega, Álvaro Bautista, Andrea Iannone, Danilo Petrucci.', 'Today: Toprak Razgatlıoğlu, Nicolò Bulega, Álvaro Bautista, Andrea Iannone, Danilo Petrucci.'),
+        circuit: { name: 'Phillip Island', t: C('Phillip Island — rychlý pobřežní okruh v Austrálii.', 'Phillip Island — a fast coastal circuit in Australia.') },
+        fact: C('Závodní stroje jsou technicky příbuzné motorkám z prodejny.', 'The race bikes are close technical cousins of showroom models.'),
+        teams: [
+          { id: 'bmw', name: 'ROKiT BMW Motorrad', blurb: C('Bavorská značka s úřadujícím šampionem Toprakem.', 'The Bavarian brand with reigning champion Toprak.'), drivers: ['Toprak Razgatlıoğlu', 'Michael van der Mark'], cars: [{ name: 'BMW M 1000 RR', b: C('Bavorský superbike na vrcholu.', 'A Bavarian superbike at the top.') }] },
+          { id: 'ducati', name: 'Aruba.it Racing Ducati', blurb: C('Italský gigant s rekordem titulů superbiků.', 'The Italian giant with a record number of superbike titles.'), drivers: ['Nicolò Bulega', 'Álvaro Bautista'], cars: [{ name: 'Ducati Panigale V4 R', b: C('Italský V4 v boji o titul.', 'The Italian V4 fighting for the title.') }] },
+          { id: 'yamaha', name: 'Pata Maxus Yamaha', blurb: C('Tovární Yamaha — domácí stáj pro mladé hvězdy.', 'Factory Yamaha — a home for rising stars.'), drivers: ['Andrea Locatelli', 'Jonathan Rea'], cars: [{ name: 'Yamaha YZF-R1', b: C('Modrá ikona z Iwaty.', 'The blue Iwata icon.') }] },
+          { id: 'kawasaki', name: 'Kawasaki Racing Team', blurb: C('Zelený tým s rekordmanem Rea v minulosti — letos s Lowesem.', 'The green squad — once home to record-holder Rea, now with Lowes.'), drivers: ['Alex Lowes', 'Garrett Gerloff'], cars: [{ name: 'Kawasaki ZX-10RR', b: C('Zelený japonský superbike.', 'The green Japanese superbike.') }] },
+          { id: 'honda', name: 'Team HRC Honda', blurb: C('Tovární Honda v boji o návrat na špici.', 'Factory Honda fighting to return to the top.'), drivers: ['Iker Lecuona', 'Xavi Vierge'], cars: [{ name: 'Honda CBR1000RR-R', b: C('Tovární superbike Hondy.', 'Honda\u2019s factory superbike.') }] }
+        ]
+      },
+      {
+        id: 'tt', cat: 'bikes', accent: '#1EA84D', full: false,
+        name: 'Isle of Man TT', tagline: C('Nejnebezpečnější závod světa — 60 km veřejných cest.', 'The world\u2019s most dangerous race — 60 km of public roads.'),
+        intro: C('Isle of Man TT je legendární silniční závod na uzavřených veřejných cestách ostrova Man. Jezdci se ženou kolem zdí a domů rychlostí přes 300 km/h, kde chyba bývá osudná.', 'The Isle of Man TT is a legendary road race on closed public roads. Riders pass walls and houses at over 300 km/h, where a mistake is often fatal.'),
+        specs: [{ k: 'length', v: '60,7 km / kolo' }, { k: 'top', v: '~330 km/h' }],
+        circuit: { name: 'Snaefell Mountain Course', t: C('Horský okruh přes 60 km dlouhý se stovkami zatáček.', 'A mountain course over 60 km long with hundreds of corners.') },
+        fact: C('Od roku 1907 si závod vyžádal přes 260 životů.', 'Since 1907 the race has claimed over 260 lives.')
+      },
+      {
+        id: 'mxgp', cat: 'bikes', accent: '#9BD81E', full: false,
+        name: 'MXGP / Supercross', tagline: C('Motokros — skoky, bláto a souboje v hlíně.', 'Motocross — jumps, mud and dirt battles.'),
+        intro: C('MXGP (venku) a Supercross (v halách) jsou vrcholy terénních motocyklů. Jezdci skáčou přes desítky metrů a bojují na hrbolatých tratích plných skoků.', 'MXGP (outdoor) and Supercross (indoor stadiums) are the peaks of off-road motorcycle racing, with riders clearing tens of metres over rugged, jump-filled tracks.'),
+        specs: [{ k: 'power', v: '~60 hp' }, { k: 'engine', v: '450 cc' }],
+        circuit: { name: C('Stadiony & terén', 'Stadiums & terrain'), t: C('Supercross v amerických stadionech, MXGP na přírodních tratích.', 'Supercross in US stadiums, MXGP on natural terrain.') },
+        fact: C('Nejdelší skoky v Supercrossu měří přes 20 metrů.', 'The longest Supercross jumps clear over 20 metres.')
+      },
+      {
+        id: 'wrc', cat: 'cars', accent: '#E84D1E', full: true,
+        name: 'WRC', tagline: C('Mistrovství světa v rally — na hraně mezi stromy.', 'World Rally Championship — on the edge between the trees.'),
+        intro: C('WRC je vrchol rally. Posádky jezdec a navigátor se ženou na čas po šotolině, asfaltu i sněhu na uzavřených úsecích běžných cest.', 'WRC is the pinnacle of rally. Driver-and-co-driver crews race against the clock on gravel, tarmac and snow over closed sections of public roads.'),
+        specs: [{ k: 'power', v: '~330 hp (Rally1)' }, { k: 'drive', v: C('4×4 / hybrid', 'AWD / hybrid') }, { k: 'crew', v: C('jezdec + navigátor', 'driver + co-driver') }],
+        weekend: C('Rallye má tři dny šotolinových, asfaltových nebo sněhových úseků. Vítězí nejnižší součet časů ze všech etap.', 'A rally runs over three days of gravel, tarmac or snow stages. The lowest cumulative time wins.'),
+        drivers: C('Současní: Kalle Rovanperä, Sébastien Ogier, Elfyn Evans, Thierry Neuville, Ott Tänak. Legendy: Loeb, McRae, Mäkinen.', 'Today: Kalle Rovanperä, Sébastien Ogier, Elfyn Evans, Thierry Neuville, Ott Tänak. Legends: Loeb, McRae, Mäkinen.'),
+        circuit: { name: 'Monte Carlo', t: C('Rallye Monte-Carlo — zrádná směs ledu a suchého asfaltu.', 'Rallye Monte-Carlo — a treacherous mix of ice and dry tarmac.') },
+        fact: C('Navigátor předčítá \u201erozpis\u201c zatáček, který si posádka sama vytvoří.', 'The co-driver reads pace notes the crew writes themselves.'),
+        teams: [
+          { id: 'toyota', name: 'Toyota Gazoo Racing WRT', blurb: C('Domov mistra Kalleho Rovanperäho i osminásobného šampiona Ogiera.', 'Home of champion Kalle Rovanperä and eight-time champion Ogier.'), drivers: ['Kalle Rovanperä', 'Elfyn Evans', 'Sébastien Ogier', 'Takamoto Katsuta'], cars: [{ name: 'Toyota GR Yaris Rally1', b: C('Hybridní rallye speciál z Japonska.', 'A hybrid Japanese rally weapon.') }] },
+          { id: 'hyundai', name: 'Hyundai Shell Mobis WRT', blurb: C('Korejská značka s Belgičanem Neuvillem a Estoncem Tänakem.', 'The Korean brand with Belgian Neuville and Estonian Tänak.'), drivers: ['Thierry Neuville', 'Ott Tänak', 'Adrien Fourmaux'], cars: [{ name: 'Hyundai i20 N Rally1', b: C('Korejský útok na titul.', 'Korea\u2019s charge for the title.') }] },
+          { id: 'msport', name: 'M-Sport Ford', blurb: C('Tradiční britský tým, který staví všechny rallye Fordy.', 'The traditional British team that builds every rally Ford.'), drivers: ['Grégoire Munster', 'Josh McErlean'], cars: [{ name: 'Ford Puma Rally1', b: C('Britsky stavěný Ford Puma.', 'A British-built Ford Puma.') }] }
+        ]
+      },
+      {
+        id: 'dakar', cat: 'cars', accent: '#E8A21E', full: false,
+        name: 'Dakar', tagline: C('Nejtěžší rally raid světa — dva týdny v poušti.', 'The world\u2019s toughest rally raid — two weeks in the desert.'),
+        intro: C('Dakar je extrémní vytrvalostní rally napříč pouští. Auta, motorky, kamiony i čtyřkolky bojují s dunami, navigací a vyčerpáním.', 'The Dakar is an extreme cross-desert endurance rally. Cars, bikes, trucks and quads battle dunes, navigation and exhaustion.'),
+        specs: [{ k: 'length', v: '~8000 km' }, { k: 'drive', v: C('4×4 / různé', 'AWD / varies') }],
+        circuit: { name: C('Saúdská Arábie', 'Saudi Arabia'), t: C('Pouštní etapy napříč Saúdskou Arábií.', 'Desert stages across Saudi Arabia.') },
+        fact: C('Některé etapy měří přes 800 km za jediný den.', 'Some stages exceed 800 km in a single day.')
+      },
+      {
+        id: 'nhra', cat: 'cars', accent: '#E81E5F', full: false,
+        name: 'NHRA', tagline: C('Dragstery — z nuly na 530 km/h za 3,6 sekundy.', 'Dragsters — 0 to 530 km/h in 3.6 seconds.'),
+        intro: C('NHRA je vrchol dragsterů. Dva vozy se utkají na rovné dráze v souboji o tisíciny sekundy — nejde o zatáčky, ale o brutální zrychlení.', 'NHRA is the pinnacle of drag racing. Two cars launch down a straight strip in a fight decided by thousandths of a second — not about corners, but brutal acceleration.'),
+        specs: [{ k: 'power', v: '~11 000 hp' }, { k: 'top', v: '~530 km/h' }, { k: 'drive', v: C('zadní / nitro V8', 'rear / nitro V8') }],
+        circuit: { name: C('Rovinka 300 m', '300 m strip'), t: C('Rovná dráha — souboj dvou vozů o zlomky sekundy.', 'A straight track — two cars fighting over fractions of a second.') },
+        fact: C('Top Fuel dragster překoná 160 km/h dřív, než dočteš tuto větu.', 'A Top Fuel car passes 160 km/h before you finish reading this sentence.')
+      }
+    ];
+  }
+}
+</script>
+</body>
+</html>
